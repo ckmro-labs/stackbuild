@@ -12,3 +12,4 @@
 * Builder: 处理构建结果: 日志/发布镜像等
 * Runner: 构建容器调度
 * Deploy: 部署模块，目标对象为K8s/Swarm，使用YAML或Helm
+* Api: platform apis.
