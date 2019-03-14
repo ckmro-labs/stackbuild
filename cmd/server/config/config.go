@@ -5,8 +5,9 @@ import "github.com/kelseyhightower/envconfig"
 type (
 	// Config provides the system configuration.
 	Config struct {
-		Logging Logging
-		Server  Server
+		Logging  Logging
+		Server   Server
+		Database Database
 	}
 
 	// Server provides the server configuration.
@@ -27,6 +28,12 @@ type (
 		Color  bool `envconfig:"STACK_BUILD_LOGS_COLOR"`
 		Pretty bool `envconfig:"STACK_BUILD_LOGS_PRETTY"`
 		Text   bool `envconfig:"STACK_BUILD_LOGS_TEXT"`
+	}
+
+	// Database provides the database configuration.
+	Database struct {
+		Database   string `envconfig:"STACK_BUILD_DATABASE_DRIVER"     default:"test"`
+		Datasource string `envconfig:"STACK_BUILD_DATABASE_DATASOURCE" default:"mongodb://localhost:27017/stackbuild"`
 	}
 )
 

@@ -19,6 +19,11 @@ func InitializeApplication(config2 config.Config) (application.Application, erro
 	webServer := web.New()
 	mux := provideRouter(server, webServer)
 	serverServer := provideServer(mux, config2)
-	applicationApplication := application.NewApplication(serverServer)
+	sessionStore, err := provideDatabase(config2)
+	if err != nil {
+		return application.Application{}, err
+	}
+	userStore := provideUserStore(sessionStore)
+	applicationApplication := application.NewApplication(serverServer, userStore)
 	return applicationApplication, nil
 }
