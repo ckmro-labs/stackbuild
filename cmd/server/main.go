@@ -9,7 +9,7 @@ import (
 	"github.com/drone/signal"
 	"github.com/joho/godotenv"
 	"github.com/laidingqing/stackbuild/cmd/server/config"
-	"github.com/laidingqing/stackbuild/server"
+	"github.com/laidingqing/stackbuild/cmd/server/wire"
 	"github.com/sirupsen/logrus"
 	"golang.org/x/sync/errgroup"
 )
@@ -30,7 +30,7 @@ func main() {
 		context.Background(),
 	)
 
-	app, err := InitializeApplication(config)
+	app, err := wire.InitializeApplication(config)
 	if err != nil {
 		logger := logrus.WithError(err)
 		logger.Fatalln("main: cannot initialize server")
@@ -47,8 +47,12 @@ func main() {
 				"tls":   config.Server.TLS,
 			},
 		).Infoln("starting the http server")
-		return app.server.ListenAndServe(ctx)
+		return app.Server.ListenAndServe(ctx)
 	})
+
+	if err := g.Wait(); err != nil {
+		logrus.WithError(err).Fatalln("program terminated")
+	}
 }
 
 func initLogging(c config.Config) {
@@ -60,18 +64,5 @@ func initLogging(c config.Config) {
 			ForceColors:   c.Logging.Color,
 			DisableColors: !c.Logging.Color,
 		})
-	}
-}
-
-// application is the main struct for the server.
-type application struct {
-	server *server.Server
-}
-
-// newApplication creates a new application struct.
-func newApplication(
-	server *server.Server) application {
-	return application{
-		server: server,
 	}
 }

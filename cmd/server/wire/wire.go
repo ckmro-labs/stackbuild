@@ -3,18 +3,19 @@
 //+build wireinject
 
 // The build tag makes sure the stub is not built in the final build.
-package main
+package wire
 
 import (
 	"github.com/google/wire"
+	"github.com/laidingqing/stackbuild/cmd/server/application"
 	"github.com/laidingqing/stackbuild/cmd/server/config"
 )
 
 //InitializeApplication ...
-func InitializeApplication(config config.Config) (application, error) {
+func InitializeApplication(config config.Config) (application.Application, error) {
 	wire.Build(
 		serverSet,
-		newApplication,
+		application.NewApplication,
 	)
-	return application{}, nil
+	return application.Application{}, nil
 }

@@ -1,4 +1,4 @@
-package main
+package wire
 
 import (
 	"github.com/go-chi/chi"

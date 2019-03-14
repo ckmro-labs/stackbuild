@@ -3,9 +3,10 @@
 //go:generate wire
 //+build !wireinject
 
-package main
+package wire
 
 import (
+	"github.com/laidingqing/stackbuild/cmd/server/application"
 	"github.com/laidingqing/stackbuild/cmd/server/config"
 	"github.com/laidingqing/stackbuild/handler/api"
 	"github.com/laidingqing/stackbuild/handler/web"
@@ -13,11 +14,11 @@ import (
 
 // Injectors from wire.go:
 
-func InitializeApplication(config2 config.Config) (application, error) {
+func InitializeApplication(config2 config.Config) (application.Application, error) {
 	server := api.New()
 	webServer := web.New()
 	mux := provideRouter(server, webServer)
 	serverServer := provideServer(mux, config2)
-	mainApplication := newApplication(serverServer)
-	return mainApplication, nil
+	applicationApplication := application.NewApplication(serverServer)
+	return applicationApplication, nil
 }
