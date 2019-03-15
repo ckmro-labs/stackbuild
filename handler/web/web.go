@@ -8,6 +8,7 @@ import (
 	"github.com/go-chi/chi/middleware"
 	"github.com/laidingqing/stackbuild/core"
 	"github.com/laidingqing/stackbuild/logger"
+	m2 "github.com/laidingqing/stackbuild/middleware"
 )
 
 // Server is a http.Handler over HTTP.
@@ -42,8 +43,7 @@ func (s Server) Handler() http.Handler {
 		r.Post("/", HandleHook(s.Repos, s.Hooks))
 	})
 	r.Get("/healthz", HandleHealthz())
-
-	r.Handle("/login", nil)
+	r.Handle("/login/{provider}", m2.OAuthMiddleware(http.HandlerFunc(HandleLogin())))
 
 	return r
 }
