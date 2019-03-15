@@ -10,8 +10,8 @@ type (
 		AuthName  string    `json:"name"`
 		Token     string    `json:"token"`
 		Expired   int64     `json:"expired"`
-		CreatedAt time.Time `json:"createdAt"`
-		UpdateAt  time.Time `json:"updatedAt"`
+		CreatedAt time.Time `json:"created_at"`
+		UpdateAt  time.Time `json:"updated_at"`
 	}
 
 	//AuthenticationStore store for authentication.
