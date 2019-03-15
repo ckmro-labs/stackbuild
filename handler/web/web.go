@@ -14,20 +14,18 @@ import (
 // Server is a http.Handler over HTTP.
 type Server struct {
 	Client *scm.Client
-	Hooks  core.HookParser
-	Repos  core.RepositoryStore
+	// Hooks  core.HookParser
+	Repos core.RepositoryStore
 }
 
 //New ...
 func New(
-	client *scm.Client,
-	hooks core.HookParser,
+	// hooks core.HookParser,
 	repos core.RepositoryStore,
 ) Server {
 	return Server{
-		Client: client,
-		Hooks:  hooks,
-		Repos:  repos,
+		// Hooks: hooks,
+		Repos: repos,
 	}
 }
 
@@ -38,12 +36,15 @@ func (s Server) Handler() http.Handler {
 	r.Use(middleware.NoCache)
 	r.Use(logger.Middleware)
 
-	r.Route("/hook", func(r chi.Router) {
-		//来自版本仓库的hook请求
-		r.Post("/", HandleHook(s.Repos, s.Hooks))
-	})
+	// r.Route("/hook", func(r chi.Router) {
+	// 	//来自版本仓库的hook请求
+	// 	// r.Post("/", HandleHook(s.Repos, s.Hooks))
+	// })
 	r.Get("/healthz", HandleHealthz())
-	r.Handle("/login/{provider}", m2.OAuthMiddleware(http.HandlerFunc(HandleLogin())))
+	r.Route("/login/{provider}", func(r chi.Router) {
+		r.Use(m2.OAuthMiddleware)
+		r.Get("/", http.HandlerFunc(HandleLogin()))
+	})
 
 	return r
 }

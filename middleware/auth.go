@@ -3,6 +3,8 @@ package middleware
 import (
 	"net/http"
 
+	"github.com/sirupsen/logrus"
+
 	"github.com/go-chi/chi"
 	"github.com/markbates/goth/gothic"
 )
@@ -13,9 +15,17 @@ func OAuthMiddleware(next http.Handler) http.Handler {
 		ctx := r.Context()
 		q := r.URL.Query()
 		provider := chi.URLParam(r, "provider")
+		if provider == "" {
+			next.ServeHTTP(w, r.WithContext(ctx))
+		}
 		q.Add("provider", provider)
 		r.URL.RawQuery = q.Encode()
-		gothic.BeginAuthHandler(w, r)
-		next.ServeHTTP(w, r.WithContext(ctx))
+		logrus.Infof("Raw: %v", r.URL.RawQuery)
+		if user, err := gothic.CompleteUserAuth(w, r); err != nil {
+			gothic.BeginAuthHandler(w, r)
+		} else {
+			logrus.Infof("user: %v", user)
+			next.ServeHTTP(w, r.WithContext(ctx))
+		}
 	})
 }

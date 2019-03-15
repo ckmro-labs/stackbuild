@@ -16,13 +16,14 @@ import (
 
 func InitializeApplication(config2 config.Config) (application.Application, error) {
 	server := api.New()
-	webServer := web.New()
-	mux := provideRouter(server, webServer)
-	serverServer := provideServer(mux, config2)
 	sessionStore, err := provideDatabase(config2)
 	if err != nil {
 		return application.Application{}, err
 	}
+	repositoryStore := provideRepositoryStore(sessionStore)
+	webServer := web.New(repositoryStore)
+	mux := provideRouter(server, webServer)
+	serverServer := provideServer(mux, config2)
 	userStore := provideUserStore(sessionStore)
 	applicationApplication := application.NewApplication(serverServer, userStore)
 	return applicationApplication, nil

@@ -35,14 +35,9 @@ type (
 
 	// Github client configuration.
 	Github struct {
-		Server       string   `envconfig:"STACK_BUILD_GITHUB_SERVER" default:"https://github.com"`
-		APIServer    string   `envconfig:"STACK_BUILD_GITHUB_API_SERVER"`
-		ClientID     string   `envconfig:"STACK_BUILD_GITHUB_CLIENT_ID"`
-		ClientSecret string   `envconfig:"STACK_BUILD_GITHUB_CLIENT_SECRET"`
-		SkipVerify   bool     `envconfig:"STACK_BUILD_GITHUB_SKIP_VERIFY"`
-		Scope        []string `envconfig:"STACK_BUILD_GITHUB_SCOPE" default:"repo,repo:status,user:email,read:org"`
-		RateLimit    int      `envconfig:"STACK_BUILD_GITHUB_USER_RATELIMIT"`
-		Debug        bool     `envconfig:"STACK_BUILD_GITHUB_DEBUG"`
+		ClientID     string `envconfig:"STACK_BUILD_GITHUB_CLIENT_ID" default:"7b8a75b008712044e7cf"`
+		ClientSecret string `envconfig:"STACK_BUILD_GITHUB_CLIENT_SECRET" default:"908c916f3998603622e070e7d8b6bfc47f733d01"`
+		CallbackURL  string `envconfig:"STACK_BUILD_GITHUB_CALLBACK_URL" default:"http://localhost:7788/login/"`
 	}
 
 	// Database provides the database configuration.

@@ -26,8 +26,8 @@ type (
 
 	// RepositoryStore 仓库操作接口
 	RepositoryStore interface {
-		List(context.Context, int64) ([]*Repository, error)
-		Find(context.Context, int64) (*Repository, error)
+		List(context.Context, string) ([]*Repository, error)
+		Find(context.Context, string) (*Repository, error)
 		Create(context.Context, *Repository) error
 		Delete(context.Context, *Repository) error
 		Activate(context.Context, *Repository) error
@@ -36,8 +36,8 @@ type (
 	//RepositoryService 提供远程仓库接口操作
 	RepositoryService interface {
 		// List returns a list of repositories.
-		List(ctx context.Context, user *User) ([]*Repository, error)
+		List(ctx context.Context, repo *Repository) ([]*Repository, error)
 		// Find returns the named repository details.
-		Find(ctx context.Context, user *User, repo string) (*Repository, error)
+		Find(ctx context.Context, repo *Repository, id string) (*Repository, error)
 	}
 )

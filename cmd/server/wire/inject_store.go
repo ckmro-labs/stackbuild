@@ -4,6 +4,7 @@ import (
 	"github.com/google/wire"
 	"github.com/laidingqing/stackbuild/cmd/server/config"
 	"github.com/laidingqing/stackbuild/core"
+	"github.com/laidingqing/stackbuild/store/repos"
 	"github.com/laidingqing/stackbuild/store/shared/db"
 	"github.com/laidingqing/stackbuild/store/user"
 )
@@ -12,6 +13,7 @@ import (
 var storeSet = wire.NewSet(
 	provideDatabase,
 	provideUserStore,
+	provideRepositoryStore,
 )
 
 // provideDatabase is a Wire provider
@@ -23,4 +25,10 @@ func provideDatabase(config config.Config) (*db.SessionStore, error) {
 func provideUserStore(db *db.SessionStore) core.UserStore {
 	users := user.New(db)
 	return users
+}
+
+// provideUserStore is a Wire provider
+func provideRepositoryStore(db *db.SessionStore) core.RepositoryStore {
+	repository := repos.New(db)
+	return repository
 }
