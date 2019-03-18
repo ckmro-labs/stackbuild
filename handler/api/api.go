@@ -6,6 +6,7 @@ import (
 	"github.com/go-chi/chi"
 	"github.com/go-chi/chi/middleware"
 	"github.com/go-chi/cors"
+	"github.com/laidingqing/stackbuild/handler/api/repos"
 	"github.com/laidingqing/stackbuild/logger"
 )
 
@@ -37,8 +38,9 @@ func (s Server) Handler() http.Handler {
 	cors := cors.New(corsOpts)
 	r.Use(cors.Handler)
 
-	r.Route("/system", func(r chi.Router) {
-
+	r.Route("/repos/{owner}/{name}", func(r chi.Router) {
+		// r.Use(acl.InjectRepository)
+		r.Get("/", repos.HandleFind())
 	})
 
 	return r
