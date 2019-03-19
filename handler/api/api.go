@@ -6,6 +6,7 @@ import (
 	"github.com/go-chi/chi"
 	"github.com/go-chi/chi/middleware"
 	"github.com/go-chi/cors"
+	"github.com/laidingqing/stackbuild/core"
 	"github.com/laidingqing/stackbuild/handler/api/repos"
 	"github.com/laidingqing/stackbuild/logger"
 )
@@ -21,11 +22,22 @@ var corsOpts = cors.Options{
 
 // Server is a http.Handler which exposes drone functionality over HTTP.
 type Server struct {
+	Repos  core.RepositoryStore
+	Repoz  core.RepositoryService
+	Syncer core.Syncer
 }
 
 //New new api server
-func New() Server {
-	return Server{}
+func New(
+	repos core.RepositoryStore,
+	repoz core.RepositoryService,
+	syncer core.Syncer,
+) Server {
+	return Server{
+		Repos:  repos,
+		Repoz:  repoz,
+		Syncer: syncer,
+	}
 }
 
 // Handler returns an http.Handler

@@ -53,3 +53,8 @@ type (
 		Find(ctx context.Context, user *User, id string, provider VcsProvider) (*Repository, error)
 	}
 )
+
+//Syncer ..
+type Syncer interface {
+	Sync(context.Context, *User, VcsProvider) error
+}

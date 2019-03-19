@@ -31,14 +31,14 @@ type (
 func Environ() (Config, error) {
 	cfg := Config{}
 	err := envconfig.Process("", &cfg)
-	defaultAddress(&cfg)
+	// defaultAddress(&cfg)
 	return cfg, err
 }
 
-func defaultAddress(c *Config) {
-	if c.Server.Key != "" || c.Server.Cert != "" || c.Server.TLS {
-		c.Server.Port = ":443"
-		c.Server.Proto = "https"
-	}
-	c.Server.Addr = c.Server.Proto + "://" + c.Server.Host
-}
+// func defaultAddress(c *Config) {
+// 	if c.Server.Key != "" || c.Server.Cert != "" || c.Server.TLS {
+// 		c.Server.Port = ":443"
+// 		c.Server.Proto = "https"
+// 	}
+// 	c.Server.Addr = c.Server.Proto + "://" + c.Server.Host
+// }

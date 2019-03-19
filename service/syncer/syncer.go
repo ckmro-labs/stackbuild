@@ -3,6 +3,8 @@ package syncer
 import (
 	"context"
 
+	"github.com/sirupsen/logrus"
+
 	"github.com/laidingqing/stackbuild/core"
 )
 
@@ -27,11 +29,17 @@ func New(
 }
 
 //Sync sync remote repository to local
-func (s *Synchronizer) Sync(ctx context.Context, user *core.User) error {
+func (s *Synchronizer) Sync(ctx context.Context, user *core.User, provider core.VcsProvider) error {
 	//
 	// STEP1: get the list of repositories from the remote
 	//
-
+	{
+		repos, err := s.repoz.List(ctx, user, provider)
+		if err != nil {
+			return err
+		}
+		logrus.Infof("Repository size: %v", len(repos))
+	}
 	//
 	// STEP2: get the list of repositories stored in the local db
 	//

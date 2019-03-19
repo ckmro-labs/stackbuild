@@ -15,16 +15,18 @@ import (
 // Injectors from wire.go:
 
 func InitializeApplication(config2 config.Config) (application.Application, error) {
-	server := api.New()
 	sessionStore, err := provideDatabase(config2)
 	if err != nil {
 		return application.Application{}, err
 	}
 	repositoryStore := provideRepositoryStore(sessionStore)
+	repositoryService := providerRepositoryService(config2)
+	userStore := provideUserStore(sessionStore)
+	syncer := provideSyncer(repositoryService, repositoryStore, userStore, config2)
+	server := api.New(repositoryStore, repositoryService, syncer)
 	webServer := web.New(repositoryStore)
 	mux := provideRouter(server, webServer)
 	serverServer := provideServer(mux, config2)
-	userStore := provideUserStore(sessionStore)
 	applicationApplication := application.NewApplication(serverServer, userStore)
 	return applicationApplication, nil
 }

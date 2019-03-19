@@ -15,6 +15,7 @@ import (
 func InitializeApplication(config config.Config) (application.Application, error) {
 	wire.Build(
 		serverSet,
+		serviceSet,
 		storeSet,
 		application.NewApplication,
 	)
