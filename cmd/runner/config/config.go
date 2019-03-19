@@ -11,13 +11,10 @@ type (
 
 	// Server provides the server configuration.
 	Server struct {
-		Addr  string `envconfig:"-"`
-		Host  string `envconfig:"STACK_BUILD_SERVER_HOST" default:"localhost:7788"`
-		Port  string `envconfig:"STACK_BUILD_SERVER_PORT" default:":7788"`
-		Proto string `envconfig:"STACK_BUILD_SERVER_PROTO" default:"http"`
-		TLS   bool   `envconfig:"STACK_BUILD_TLS_AUTOCERT"`
-		Cert  string `envconfig:"STACK_BUILD_TLS_CERT"`
-		Key   string `envconfig:"STACK_BUILD_TLS_KEY"`
+		Port string `envconfig:"STACK_BUILD_SERVER_PORT" default:":7788"`
+		TLS  bool   `envconfig:"STACK_BUILD_TLS_AUTOCERT"`
+		Cert string `envconfig:"STACK_BUILD_TLS_CERT"`
+		Key  string `envconfig:"STACK_BUILD_TLS_KEY"`
 	}
 
 	// Logging provides the logging configuration.

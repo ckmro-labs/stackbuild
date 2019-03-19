@@ -5,17 +5,18 @@ import "context"
 type (
 	// User represents a user of the system.
 	User struct {
-		ID        string `json:"id"`
-		Login     string `json:"login"`
-		Email     string `json:"email"`
-		Admin     bool   `json:"admin"`
-		Active    bool   `json:"active"`
-		Avatar    string `json:"avatar"`
-		Syncing   bool   `json:"syncing"`
-		Synced    int64  `json:"synced"`
-		Created   int64  `json:"created"`
-		Updated   int64  `json:"updated"`
-		LastLogin int64  `json:"last_login"`
+		ID              string           `json:"id"`
+		Login           string           `json:"login"`
+		Email           string           `json:"email"`
+		Admin           bool             `json:"admin"`
+		Active          bool             `json:"active"`
+		Avatar          string           `json:"avatar"`
+		Syncing         bool             `json:"syncing"`
+		Synced          int64            `json:"synced"`
+		Created         int64            `json:"created"`
+		Updated         int64            `json:"updated"`
+		LastLogin       int64            `json:"last_login"`
+		Authentications []Authentication `json:"authentications"`
 	}
 
 	// UserStore 用户存储接口.
