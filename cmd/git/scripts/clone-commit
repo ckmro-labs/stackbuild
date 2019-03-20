@@ -1,0 +1,17 @@
+#!/bin/sh
+
+FLAGS=""
+if [[ ! -z "${PLUGIN_DEPTH}" ]]; then
+	FLAGS="--depth=${PLUGIN_DEPTH}"
+fi
+
+if [ ! -d .git ]; then
+	git init
+	git remote add origin ${STACK_BUILD_REMOTE_URL}
+fi
+
+set -e
+set -x
+
+git fetch ${FLAGS} origin +refs/heads/${STACK_BUILD_COMMIT_BRANCH}:
+git checkout ${STACK_BUILD_COMMIT_SHA} -b ${STACK_BUILD_COMMIT_BRANCH}
