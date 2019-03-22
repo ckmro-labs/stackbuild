@@ -3,7 +3,6 @@ package web
 import (
 	"net/http"
 
-	"github.com/drone/go-scm/scm"
 	"github.com/go-chi/chi"
 	"github.com/go-chi/chi/middleware"
 	"github.com/laidingqing/stackbuild/core"
@@ -13,19 +12,27 @@ import (
 
 // Server is a http.Handler over HTTP.
 type Server struct {
-	Client *scm.Client
-	// Hooks  core.HookParser
-	Repos core.RepositoryStore
+	Repos   core.RepositoryStore
+	Session core.Session
+	Users   core.UserStore
+	Userz   core.UserService
+	Syncer  core.Syncer
 }
 
 //New ...
 func New(
-	// hooks core.HookParser,
 	repos core.RepositoryStore,
+	session core.Session,
+	users core.UserStore,
+	userz core.UserService,
+	syncer core.Syncer,
 ) Server {
 	return Server{
-		// Hooks: hooks,
-		Repos: repos,
+		Repos:   repos,
+		Session: session,
+		Users:   users,
+		Userz:   userz,
+		Syncer:  syncer,
 	}
 }
 
@@ -41,9 +48,20 @@ func (s Server) Handler() http.Handler {
 	// 	// r.Post("/", HandleHook(s.Repos, s.Hooks))
 	// })
 	r.Get("/healthz", HandleHealthz())
-	r.Route("/login/{provider}", func(r chi.Router) {
+	r.Route("/login", func(r chi.Router) {
 		r.Use(m2.OAuthMiddleware)
-		r.Get("/", http.HandlerFunc(HandleLogin()))
+		r.Get("/", http.HandlerFunc(HandleFormLogin(
+			s.Users,
+			s.Userz,
+			s.Syncer,
+			s.Session,
+		)))
+		r.Get("/{provider}", http.HandlerFunc(HandleOAuthLogin(
+			s.Users,
+			s.Userz,
+			s.Syncer,
+			s.Session,
+		)))
 	})
 
 	return r

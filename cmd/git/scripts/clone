@@ -27,11 +27,11 @@ fi
 
 
 if [[ -z "${STACK_BUILD_COMMIT_AUTHOR_NAME}" ]]; then
-	export STACK_BUILD_COMMIT_AUTHOR_NAME=drone
+	export STACK_BUILD_COMMIT_AUTHOR_NAME=stackbuild
 fi
 
 if [[ -z "${STACK_BUILD_COMMIT_AUTHOR_EMAIL}" ]]; then
-	export STACK_BUILD_COMMIT_AUTHOR_EMAIL=drone@localhost
+	export STACK_BUILD_COMMIT_AUTHOR_EMAIL=stackbuild@localhost
 fi
 
 export GIT_AUTHOR_NAME=${STACK_BUILD_COMMIT_AUTHOR_NAME}

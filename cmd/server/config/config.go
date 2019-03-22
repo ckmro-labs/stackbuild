@@ -1,6 +1,10 @@
 package config
 
-import "github.com/kelseyhightower/envconfig"
+import (
+	"time"
+
+	"github.com/kelseyhightower/envconfig"
+)
 
 type (
 	// Config provides the system configuration.
@@ -8,6 +12,8 @@ type (
 		Logging  Logging
 		Server   Server
 		Database Database
+
+		Session Session
 
 		// Remote configurations
 		Github Github
@@ -22,6 +28,12 @@ type (
 		TLS   bool   `envconfig:"STACK_BUILD_TLS_AUTOCERT"`
 		Cert  string `envconfig:"STACK_BUILD_TLS_CERT"`
 		Key   string `envconfig:"STACK_BUILD_TLS_KEY"`
+	}
+
+	//Session cookie-base session configuration.
+	Session struct {
+		Timeout time.Duration `envconfig:"DSTACK_BUILD_COOKIE_TIMEOUT" default:"720h"`
+		Secret  string        `envconfig:"STACK_BUILD_COOKIE_SECRET"`
 	}
 
 	// Logging provides the logging configuration.
@@ -45,7 +57,7 @@ type (
 
 	// Database provides the database configuration.
 	Database struct {
-		Database   string `envconfig:"STACK_BUILD_DATABASE_DRIVER"     default:"test"`
+		Database   string `envconfig:"STACK_BUILD_DATABASE_DRIVER"     default:"stackbuild"`
 		Datasource string `envconfig:"STACK_BUILD_DATABASE_DATASOURCE" default:"mongodb://localhost:27017/stackbuild"`
 	}
 )

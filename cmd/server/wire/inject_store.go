@@ -18,7 +18,7 @@ var storeSet = wire.NewSet(
 
 // provideDatabase is a Wire provider
 func provideDatabase(config config.Config) (*db.SessionStore, error) {
-	return nil, db.Connect(config.Database.Datasource)
+	return nil, db.NewSessionStore(config.Database.Datasource, config.Database.Database)
 }
 
 // provideUserStore is a Wire provider

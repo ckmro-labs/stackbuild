@@ -10,6 +10,7 @@ import (
 	"github.com/laidingqing/stackbuild/cmd/server/config"
 	"github.com/laidingqing/stackbuild/handler/api"
 	"github.com/laidingqing/stackbuild/handler/web"
+	"github.com/laidingqing/stackbuild/service/user"
 )
 
 // Injectors from wire.go:
@@ -24,7 +25,9 @@ func InitializeApplication(config2 config.Config) (application.Application, erro
 	userStore := provideUserStore(sessionStore)
 	syncer := provideSyncer(repositoryService, repositoryStore, userStore, config2)
 	server := api.New(repositoryStore, repositoryService, syncer)
-	webServer := web.New(repositoryStore)
+	session := provideSession(userStore, config2)
+	userService := user.New()
+	webServer := web.New(repositoryStore, session, userStore, userService, syncer)
 	mux := provideRouter(server, webServer)
 	serverServer := provideServer(mux, config2)
 	applicationApplication := application.NewApplication(serverServer, userStore)

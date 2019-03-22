@@ -16,13 +16,14 @@ type (
 		Created         int64            `json:"created"`
 		Updated         int64            `json:"updated"`
 		LastLogin       int64            `json:"last_login"`
+		Token           string           `json:"token"` //登录后需要更新它
 		Authentications []Authentication `json:"authentications"`
 	}
 
 	// UserStore 用户存储接口.
 	UserStore interface {
 		// Find returns a user from the datastore.
-		Find(context.Context, int64) (*User, error)
+		Find(context.Context, string) (*User, error)
 		// FindLogin returns a user from the datastore by username.
 		FindLogin(context.Context, string) (*User, error)
 		// FindToken returns a user from the datastore by token.

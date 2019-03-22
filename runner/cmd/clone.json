@@ -1,0 +1,71 @@
+{
+	"metadata": {
+	  "uid": "nk1ek4c40h0k4rekms9t6bdwo20wmqt1",
+	  "namespace": "nk1ek4c40h0k4rekms9t6bdwo20wmqt1",
+	  "name": "nk1ek4c40h0k4rekms9t6bdwo20wmqt1",
+	  "labels": {
+		"pipeline.kind": "pipeline",
+		"pipeline.name": "default",
+		"pipeline.type": ""
+	  }
+	},
+	"platform": {},
+	"steps": [
+	  {
+		"metadata": {
+		  "uid": "vw8426mhtcz6at4ocy4t23uzkny3s71v",
+		  "namespace": "nk1ek4c40h0k4rekms9t6bdwo20wmqt1",
+		  "name": "clone",
+		  "labels": {
+			"step.name": "clone"
+		  }
+		},
+		"environment": {
+		  "CI_WORKSPACE": "/src",
+		  "CI_WORKSPACE_BASE": "/src",
+		  "CI_WORKSPACE_PATH": "",
+		  "STACK_BUILD_EVENT": "",
+		  "STACK_BUILD_COMMIT_BRANCH": "master",
+		  "STACK_BUILD_COMMIT_REF": "refs/heads/master",
+		  "STACK_BUILD_COMMIT_SHA": "ac20fe54ac42fad1a9794111f8f3d32d6fc9144b",
+		  "STACK_BUILD_REMOTE_URL": "https://github.com/ckmro-labs/spring-boot-2-sample-app.git",
+		  "STACK_BUILD_WORKSPACE": "/src",
+		  "STACK_BUILD_WORKSPACE_BASE": "/src",
+		  "STACK_BUILD_WORKSPACE_PATH": ""
+		},
+		"volumes": [
+		  {
+			"name": "workspace",
+			"path": "/src"
+		  }
+		],
+		"working_dir": "/src",
+		"docker": {
+		  "image": "stackbuild/git:latest",
+		  "pull_policy": "if-not-exists"
+		}
+	  }
+	],
+	"files": [
+	  {
+		"metadata": {
+		  "uid": "0vkpbaal89nb7u3cm51o1amkb13xhu4i",
+		  "namespace": "nk1ek4c40h0k4rekms9t6bdwo20wmqt1",
+		  "name": "test"
+		},
+		"data": "CmlmIFsgLW4gIiRDSV9ORVRSQ19NQUNISU5FIiBdOyB0aGVuCmNhdCA8PEVPRiA+ICRIT01FLy5uZXRyYwptYWNoaW5lICRDSV9ORVRSQ19NQUNISU5FCmxvZ2luICRDSV9ORVRSQ19VU0VSTkFNRQpwYXNzd29yZCAkQ0lfTkVUUkNfUEFTU1dPUkQKRU9GCmNobW9kIDA2MDAgJEhPTUUvLm5ldHJjCmZpCnVuc2V0IENJX05FVFJDX1VTRVJOQU1FCnVuc2V0IENJX05FVFJDX1BBU1NXT1JECnVuc2V0IERST05FX05FVFJDX1VTRVJOQU1FCnVuc2V0IERST05FX05FVFJDX1BBU1NXT1JECnNldCAtZQoKZWNobyArICJtdm4gaW5zdGFsbCAtRHNraXBUZXN0cz10cnVlIC1EbWF2ZW4uamF2YWRvYy5za2lwPXRydWUgLUIgLVYiCm12biBpbnN0YWxsIC1Ec2tpcFRlc3RzPXRydWUgLURtYXZlbi5qYXZhZG9jLnNraXA9dHJ1ZSAtQiAtVgoKZWNobyArICJtdm4gdGVzdCAtQiIKbXZuIHRlc3QgLUIKCg=="
+	  }
+	],
+	"docker": {
+	  "volumes": [
+		{
+		  "metadata": {
+			"uid": "cdeldffjcs5d2qlp1eojcu6fa2m25m3d",
+			"namespace": "nk1ek4c40h0k4rekms9t6bdwo20wmqt1",
+			"name": "workspace"
+		  },
+		  "temp": {}
+		}
+	  ]
+	}
+  }
