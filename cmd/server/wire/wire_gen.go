@@ -10,6 +10,7 @@ import (
 	"github.com/laidingqing/stackbuild/cmd/server/config"
 	"github.com/laidingqing/stackbuild/handler/api"
 	"github.com/laidingqing/stackbuild/handler/web"
+	"github.com/laidingqing/stackbuild/pubsub"
 	"github.com/laidingqing/stackbuild/service/user"
 )
 
@@ -21,7 +22,8 @@ func InitializeApplication(config2 config.Config) (application.Application, erro
 	repositoryService := providerRepositoryService(config2)
 	userStore := provideUserStore(sessionStore)
 	syncer := provideSyncer(repositoryService, repositoryStore, userStore, config2)
-	server := api.New(repositoryStore, repositoryService, syncer)
+	corePubsub := pubsub.New()
+	server := api.New(repositoryStore, repositoryService, syncer, corePubsub)
 	session := provideSession(userStore, config2)
 	userService := user.New()
 	webServer := web.New(repositoryStore, session, userStore, userService, syncer)

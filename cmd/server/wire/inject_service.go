@@ -4,6 +4,7 @@ import (
 	"github.com/google/wire"
 	"github.com/laidingqing/stackbuild/cmd/server/config"
 	"github.com/laidingqing/stackbuild/core"
+	"github.com/laidingqing/stackbuild/pubsub"
 	"github.com/laidingqing/stackbuild/service/repo"
 	"github.com/laidingqing/stackbuild/service/syncer"
 	"github.com/laidingqing/stackbuild/service/user"
@@ -12,6 +13,7 @@ import (
 
 // wire set for loading the services.
 var serviceSet = wire.NewSet(
+	pubsub.New,
 	user.New,
 	providerRepositoryService,
 	provideSyncer,

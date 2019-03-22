@@ -7,6 +7,8 @@ import (
 	"github.com/go-chi/chi/middleware"
 	"github.com/go-chi/cors"
 	"github.com/laidingqing/stackbuild/core"
+	"github.com/laidingqing/stackbuild/handler/api/acl"
+	"github.com/laidingqing/stackbuild/handler/api/events"
 	"github.com/laidingqing/stackbuild/handler/api/repos"
 	"github.com/laidingqing/stackbuild/logger"
 )
@@ -25,6 +27,7 @@ type Server struct {
 	Repos  core.RepositoryStore
 	Repoz  core.RepositoryService
 	Syncer core.Syncer
+	Events core.Pubsub
 }
 
 //New new api server
@@ -32,11 +35,13 @@ func New(
 	repos core.RepositoryStore,
 	repoz core.RepositoryService,
 	syncer core.Syncer,
+	events core.Pubsub,
 ) Server {
 	return Server{
 		Repos:  repos,
 		Repoz:  repoz,
 		Syncer: syncer,
+		Events: events,
 	}
 }
 
@@ -53,6 +58,13 @@ func (s Server) Handler() http.Handler {
 	r.Route("/repos/{owner}/{name}", func(r chi.Router) {
 		// r.Use(acl.InjectRepository)
 		r.Get("/", repos.HandleFind())
+	})
+	r.Route("/users", func(r chi.Router) {
+		r.Use(acl.AuthorizeAdmin)
+	})
+
+	r.Route("/stream", func(r chi.Router) {
+		r.Get("/", events.HandleLogStream(s.Events))
 	})
 
 	return r

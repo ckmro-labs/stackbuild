@@ -2,6 +2,8 @@ package user
 
 import (
 	"context"
+	"fmt"
+	"time"
 
 	"github.com/laidingqing/stackbuild/core"
 	"github.com/laidingqing/stackbuild/store/shared/db"
@@ -10,6 +12,11 @@ import (
 
 //UsersCollKey users mongo collection
 const UsersCollKey = "users"
+
+// errs definition
+var (
+	ErrorLoginNameExisted = fmt.Errorf("login name existed")
+)
 
 // New returns a new UserStore.
 func New(db *db.SessionStore) core.UserStore {
@@ -48,4 +55,17 @@ func (s *userStore) FindToken(ctx context.Context, token string) (*core.User, er
 	var user *core.User
 	err := s.db.C(UsersCollKey).Find(query).One(&user)
 	return user, err
+}
+
+//Create persists a user.
+func (s *userStore) Create(ctx context.Context, user *core.User) error {
+	defer s.db.Close()
+	//find unquie key
+	if u, _ := s.FindLogin(ctx, user.Login); u.Login == user.Login {
+		return ErrorLoginNameExisted
+	}
+	user.ID = bson.NewObjectId().Hex()
+	user.Created = time.Now().UnixNano()
+	err := s.db.C(UsersCollKey).Insert(user)
+	return err
 }

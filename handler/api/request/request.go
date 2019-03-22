@@ -14,6 +14,12 @@ const (
 	repoKey
 )
 
+// UserFrom returns the value of the user key on the ctx
+func UserFrom(ctx context.Context) (*core.User, bool) {
+	user, ok := ctx.Value(userKey).(*core.User)
+	return user, ok
+}
+
 // WithRepo returns a copy of repository into context
 func WithRepo(parent context.Context, repo *core.Repository) context.Context {
 	return context.WithValue(parent, repoKey, repo)

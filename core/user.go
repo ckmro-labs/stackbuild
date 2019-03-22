@@ -28,6 +28,8 @@ type (
 		FindLogin(context.Context, string) (*User, error)
 		// FindToken returns a user from the datastore by token.
 		FindToken(context.Context, string) (*User, error)
+		// Create persists a new user to the datastore.
+		Create(context.Context, *User) error
 	}
 	// UserService 远程用户操作接口, 如github.com用户
 	UserService interface {
