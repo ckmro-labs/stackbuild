@@ -35,3 +35,12 @@ func RepoFrom(ctx context.Context) (*core.Repository, bool) {
 	repo, ok := ctx.Value(repoKey).(*core.Repository)
 	return repo, ok
 }
+
+//ProviderFrom convert vcs provider
+func ProviderFrom(name string) core.VcsProvider {
+	if name == "github" {
+		return core.VcsProviderGitHub
+	}
+
+	return core.VcsProviderGitHub
+}

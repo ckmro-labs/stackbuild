@@ -30,10 +30,7 @@ func HandleFormLogin(
 	session core.Session,
 ) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		// 从context中获取上下文
-		// 获取token
-		// 过期跳转登录表单/3rd platform
-		// 查询用户
-		// 更新context/cookies.
+		// 从context中获取上下文，分辩是OAuth回调登录或表单登录
+
 	}
 }

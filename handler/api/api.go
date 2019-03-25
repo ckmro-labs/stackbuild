@@ -55,12 +55,12 @@ func (s Server) Handler() http.Handler {
 	cors := cors.New(corsOpts)
 	r.Use(cors.Handler)
 
-	r.Route("/repos/{owner}/{name}", func(r chi.Router) {
-		// r.Use(acl.InjectRepository)
-		r.Get("/", repos.HandleFind())
+	r.Route("/repos", func(r chi.Router) {
+		r.Get("/{provider}", repos.HandleListRepos(s.Repoz))
 	})
 	r.Route("/users", func(r chi.Router) {
 		r.Use(acl.AuthorizeAdmin)
+		r.Get("/repos", repos.HandleFind())
 	})
 
 	r.Route("/stream", func(r chi.Router) {

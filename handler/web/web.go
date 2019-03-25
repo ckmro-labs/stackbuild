@@ -49,19 +49,21 @@ func (s Server) Handler() http.Handler {
 	// })
 	r.Get("/healthz", HandleHealthz())
 	r.Route("/login", func(r chi.Router) {
-		r.Use(m2.OAuthMiddleware)
 		r.Get("/", http.HandlerFunc(HandleFormLogin(
 			s.Users,
 			s.Userz,
 			s.Syncer,
 			s.Session,
 		)))
-		r.Get("/{provider}", http.HandlerFunc(HandleOAuthLogin(
-			s.Users,
-			s.Userz,
-			s.Syncer,
-			s.Session,
-		)))
+		r.Route("/{provider}", func(r chi.Router) {
+			r.Use(m2.OAuthMiddleware)
+			r.Get("/", http.HandlerFunc(HandleOAuthLogin(
+				s.Users,
+				s.Userz,
+				s.Syncer,
+				s.Session,
+			)))
+		})
 	})
 
 	return r
