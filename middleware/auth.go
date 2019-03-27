@@ -3,6 +3,7 @@ package middleware
 import (
 	"net/http"
 
+	"github.com/laidingqing/stackbuild/core"
 	"github.com/sirupsen/logrus"
 
 	"github.com/go-chi/chi"
@@ -25,6 +26,12 @@ func OAuthMiddleware(next http.Handler) http.Handler {
 			gothic.BeginAuthHandler(w, r)
 		} else {
 			logrus.Infof("user: %v", user)
+			ctx = core.WithToken(ctx, &core.Token{
+				Provider: provider,
+				Access:   user.AccessToken,
+				Refresh:  user.RefreshToken,
+				Expires:  user.ExpiresAt,
+			})
 			next.ServeHTTP(w, r.WithContext(ctx))
 		}
 	})

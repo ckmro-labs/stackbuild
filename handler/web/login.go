@@ -8,6 +8,7 @@ import (
 
 	"github.com/laidingqing/stackbuild/core"
 	"github.com/laidingqing/stackbuild/handler/errors"
+	"github.com/laidingqing/stackbuild/logger"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -19,11 +20,30 @@ func HandleOAuthLogin(
 	session core.Session,
 ) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		// 从context中获取上下文
-		// 获取token
-		// 过期跳转登录表单/3rd platform
-		// 查询用户
-		// 更新context/cookies.
+		// 授权回调
+		// * 根据Context Session判断是否是登录用户，是进行绑定第三方授权信息
+		// * 新用户创建用户并绑定
+		// * 创建会话
+		ctx := r.Context()
+		log := logger.FromContext(ctx)
+		user, err := session.Get(r)
+		source := core.TokenFrom(ctx)
+		if err == nil && user != nil || user.ID != "" {
+			log.Debugf("已登录用户: %v", user.ID)
+			for _, auth := range user.Authentications {
+				if auth.AuthName.String() == source.Provider {
+					auth.Expired = source.Expires.Unix()
+					auth.Token = source.Access
+					auth.Refresh = source.Refresh
+				}
+			}
+
+		} else {
+			// TODO 非登录用户
+		}
+
+		session.Create(w, user)
+		http.Redirect(w, r, "/healthz", 303)
 	}
 }
 

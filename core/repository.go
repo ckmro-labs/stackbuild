@@ -14,6 +14,19 @@ const (
 	VcsProviderGitee VcsProvider = "gitee"
 )
 
+func (p VcsProvider) String() string {
+	switch p {
+	case VcsProviderGitHub:
+		return "github"
+	case VcsProviderGitLab:
+		return "gitlab"
+	case VcsProviderGitee:
+		return "gitee"
+	default:
+		return "UNKNOWN"
+	}
+}
+
 type (
 	// Repository represents a source code repository.
 	Repository struct {
