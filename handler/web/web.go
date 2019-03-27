@@ -47,9 +47,11 @@ func (s Server) Handler() http.Handler {
 	// 	//来自版本仓库的hook请求
 	// 	// r.Post("/", HandleHook(s.Repos, s.Hooks))
 	// })
+	r.Handle("/static/*", http.StripPrefix("/static/", http.FileServer(http.Dir("./static"))))
+
 	r.Get("/healthz", HandleHealthz())
 	r.Route("/login", func(r chi.Router) {
-		r.Get("/", http.HandlerFunc(HandleFormLogin(
+		r.Post("/form", http.HandlerFunc(HandleFormLogin(
 			s.Users,
 			s.Userz,
 			s.Syncer,

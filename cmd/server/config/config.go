@@ -51,14 +51,14 @@ type (
 		APIServer    string `envconfig:"STACK_BUILD_GITHUB_API_SERVER"`
 		ClientID     string `envconfig:"STACK_BUILD_GITHUB_CLIENT_ID" default:"7b8a75b008712044e7cf"`
 		ClientSecret string `envconfig:"STACK_BUILD_GITHUB_CLIENT_SECRET" default:"908c916f3998603622e070e7d8b6bfc47f733d01"`
-		CallbackURL  string `envconfig:"STACK_BUILD_GITHUB_CALLBACK_URL" default:"http://localhost:7788/login/"`
+		CallbackURL  string `envconfig:"STACK_BUILD_GITHUB_CALLBACK_URL" default:"http://localhost:7788/login"`
 		Debug        bool   `envconfig:"STACK_BUILD_GITHUB_DEBUG"`
 	}
 
 	// Database provides the database configuration.
 	Database struct {
 		Database   string `envconfig:"STACK_BUILD_DATABASE_DRIVER"     default:"stackbuild"`
-		Datasource string `envconfig:"STACK_BUILD_DATABASE_DATASOURCE" default:"mongodb://localhost:27017/stackbuild"`
+		Datasource string `envconfig:"STACK_BUILD_DATABASE_DATASOURCE" default:"mongodb://localhost:27017"`
 	}
 )
 

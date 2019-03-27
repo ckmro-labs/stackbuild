@@ -6,6 +6,13 @@ import (
 	"github.com/laidingqing/stackbuild/core"
 )
 
+//HandleLoginForm 临时登录表单
+func HandleLoginForm() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+
+	}
+}
+
 //HandleOAuthLogin A 3rd authentication and session initialization.
 func HandleOAuthLogin(
 	users core.UserStore,
