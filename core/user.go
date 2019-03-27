@@ -5,19 +5,19 @@ import "context"
 type (
 	// User represents a user of the system.
 	User struct {
-		ID              string           `json:"id"`
-		Login           string           `json:"login"`
-		Email           string           `json:"email"`
-		Admin           bool             `json:"admin"`
-		Active          bool             `json:"active"`
-		Avatar          string           `json:"avatar"`
-		Syncing         bool             `json:"syncing"`
-		Synced          int64            `json:"synced"`
-		Created         int64            `json:"created"`
-		Updated         int64            `json:"updated"`
-		LastLogin       int64            `json:"last_login"`
-		Token           string           `json:"token"` //登录后需要更新它
-		Authentications []Authentication `json:"authentications"`
+		ID              string           `bson:"_id" json:"id,omitempty"`
+		Login           string           `bson:"login" json:"login,omitempty"`
+		Password        string           `bson:"-" json:"password,omitempty"`
+		EncryptPassword string           `bson:"encryptPassword" json:"-"`
+		Email           string           `bson:"email" json:"email,omitempty"`
+		Admin           bool             `bson:"admin"`
+		Active          bool             `bson:"active" json:"active,omitempty"`
+		Avatar          string           `bson:"avatar" json:"avatar,omitempty"`
+		Created         int64            `bson:"created" json:"created,omitempty"`
+		Updated         int64            `bson:"updated" json:"updated,omitempty"`
+		LastLogin       int64            `bson:"lastLogin" json:"last_login,omitempty"`
+		Token           string           `bson:"token" json:"token,omitempty"` //登录后需要更新它
+		Authentications []Authentication `bson:"authentications" json:"authentications,omitempty"`
 	}
 
 	// UserStore 用户存储接口.

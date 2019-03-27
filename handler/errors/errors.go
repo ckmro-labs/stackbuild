@@ -9,6 +9,10 @@ var (
 	ErrForbidden = New("无权访问")
 	// ErrNotFound is not found.
 	ErrNotFound = New("资源未发现")
+	//ErrUserExisted  ...
+	ErrUserExisted = New("账号已存在")
+	//ErrPasswordNotMatched ..
+	ErrPasswordNotMatched = New("登录密码不匹配")
 )
 
 // Error json-encoded API error.

@@ -38,7 +38,7 @@ type (
 
 	// Logging provides the logging configuration.
 	Logging struct {
-		Debug  bool `envconfig:"STACK_BUILD_LOGS_DEBUG"`
+		Debug  bool `envconfig:"STACK_BUILD_LOGS_DEBUG" default:"true"`
 		Trace  bool `envconfig:"STACK_BUILD_LOGS_TRACE"`
 		Color  bool `envconfig:"STACK_BUILD_LOGS_COLOR"`
 		Pretty bool `envconfig:"STACK_BUILD_LOGS_PRETTY"`
@@ -58,7 +58,7 @@ type (
 	// Database provides the database configuration.
 	Database struct {
 		Database   string `envconfig:"STACK_BUILD_DATABASE_DRIVER"     default:"stackbuild"`
-		Datasource string `envconfig:"STACK_BUILD_DATABASE_DATASOURCE" default:"mongodb://localhost:27017"`
+		Datasource string `envconfig:"STACK_BUILD_DATABASE_DATASOURCE" default:"mongodb://localhost:27017/stackbuild"`
 	}
 )
 

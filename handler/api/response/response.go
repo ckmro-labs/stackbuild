@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/laidingqing/stackbuild/handler/api/errors"
+	"github.com/laidingqing/stackbuild/handler/errors"
 )
 
 // ErrorCode writes the json-encoded error message to the response.

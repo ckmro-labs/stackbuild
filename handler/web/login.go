@@ -2,16 +2,14 @@ package web
 
 import (
 	"net/http"
+	"time"
+
+	"github.com/sirupsen/logrus"
 
 	"github.com/laidingqing/stackbuild/core"
+	"github.com/laidingqing/stackbuild/handler/errors"
+	"golang.org/x/crypto/bcrypt"
 )
-
-//HandleLoginForm 临时登录表单
-func HandleLoginForm() http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-
-	}
-}
 
 //HandleOAuthLogin A 3rd authentication and session initialization.
 func HandleOAuthLogin(
@@ -37,7 +35,31 @@ func HandleFormLogin(
 	session core.Session,
 ) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		// 从context中获取上下文，分辩是OAuth回调登录或表单登录
+		r.ParseForm()
+		login := r.Form.Get("login")
+		password := r.Form.Get("password")
+		logrus.Infof("password: %v", password)
+		hashedPassword, _ := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
+		user, err := users.FindLogin(r.Context(), login)
+		if err != nil {
+			logrus.Errorf("query user err: %v", err.Error())
+			writeLoginError(w, r, errors.ErrUserExisted)
+		}
+		logrus.Infof("user: %v, %v", user.EncryptPassword, string(hashedPassword))
+		if string(hashedPassword) != user.EncryptPassword {
+			writeLoginError(w, r, errors.ErrPasswordNotMatched)
+		}
 
+		user.LastLogin = time.Now().Unix()
+		// err = users.Update(ctx, user)
+		// if err != nil {
+		// 	logger.Errorf("cannot update user: %s", err)
+		// }
+		session.Create(w, user)
+		http.Redirect(w, r, "/healthz", 303)
 	}
+}
+
+func writeLoginError(w http.ResponseWriter, r *http.Request, err error) {
+	http.Redirect(w, r, "/static/index.html?err="+err.Error(), 303)
 }

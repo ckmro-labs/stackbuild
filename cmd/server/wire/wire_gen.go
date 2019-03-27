@@ -23,7 +23,7 @@ func InitializeApplication(config2 config.Config) (application.Application, erro
 	userStore := provideUserStore(sessionStore)
 	syncer := provideSyncer(repositoryService, repositoryStore, userStore, config2)
 	corePubsub := pubsub.New()
-	server := api.New(repositoryStore, repositoryService, syncer, corePubsub)
+	server := api.New(repositoryStore, repositoryService, syncer, corePubsub, userStore)
 	session := provideSession(userStore, config2)
 	userService := user.New()
 	webServer := web.New(repositoryStore, session, userStore, userService, syncer)

@@ -7,9 +7,9 @@ import (
 	"github.com/go-chi/chi/middleware"
 	"github.com/go-chi/cors"
 	"github.com/laidingqing/stackbuild/core"
-	"github.com/laidingqing/stackbuild/handler/api/acl"
 	"github.com/laidingqing/stackbuild/handler/api/events"
 	"github.com/laidingqing/stackbuild/handler/api/repos"
+	"github.com/laidingqing/stackbuild/handler/api/users"
 	"github.com/laidingqing/stackbuild/logger"
 )
 
@@ -28,6 +28,7 @@ type Server struct {
 	Repoz  core.RepositoryService
 	Syncer core.Syncer
 	Events core.Pubsub
+	Users  core.UserStore
 }
 
 //New new api server
@@ -36,12 +37,14 @@ func New(
 	repoz core.RepositoryService,
 	syncer core.Syncer,
 	events core.Pubsub,
+	users core.UserStore,
 ) Server {
 	return Server{
 		Repos:  repos,
 		Repoz:  repoz,
 		Syncer: syncer,
 		Events: events,
+		Users:  users,
 	}
 }
 
@@ -51,7 +54,6 @@ func (s Server) Handler() http.Handler {
 	r.Use(middleware.Recoverer)
 	r.Use(middleware.NoCache)
 	r.Use(logger.Middleware)
-	// r.Use(auth.HandleAuthentication(s.Session))
 	cors := cors.New(corsOpts)
 	r.Use(cors.Handler)
 
@@ -59,7 +61,7 @@ func (s Server) Handler() http.Handler {
 		r.Get("/{provider}", repos.HandleListRepos(s.Repoz))
 	})
 	r.Route("/users", func(r chi.Router) {
-		r.Use(acl.AuthorizeAdmin)
+		r.Post("/", users.HandleCreateUser(s.Users))
 		r.Get("/repos", repos.HandleFind())
 	})
 
