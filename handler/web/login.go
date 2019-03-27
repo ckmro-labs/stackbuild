@@ -39,15 +39,18 @@ func HandleFormLogin(
 		login := r.Form.Get("login")
 		password := r.Form.Get("password")
 		logrus.Infof("password: %v", password)
-		hashedPassword, _ := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
+
 		user, err := users.FindLogin(r.Context(), login)
 		if err != nil {
 			logrus.Errorf("query user err: %v", err.Error())
 			writeLoginError(w, r, errors.ErrUserExisted)
+			return
 		}
-		logrus.Infof("user: %v, %v", user.EncryptPassword, string(hashedPassword))
-		if string(hashedPassword) != user.EncryptPassword {
+
+		err = bcrypt.CompareHashAndPassword([]byte(user.EncryptPassword), []byte(password))
+		if err != nil {
 			writeLoginError(w, r, errors.ErrPasswordNotMatched)
+			return
 		}
 
 		user.LastLogin = time.Now().Unix()
@@ -61,5 +64,5 @@ func HandleFormLogin(
 }
 
 func writeLoginError(w http.ResponseWriter, r *http.Request, err error) {
-	http.Redirect(w, r, "/static/index.html?err="+err.Error(), 303)
+	http.Redirect(w, r, "/static/?err="+err.Error(), 303)
 }
