@@ -24,9 +24,9 @@ func New(config config.Config) core.RepositoryService {
 	}
 }
 
-func (s *service) provideClient(provider core.VcsProvider) *scm.Client {
+func (s *service) provideClient(provider string) *scm.Client {
 	switch {
-	case provider != core.VcsProviderGitHub:
+	case provider != core.VcsProviderGitHub.String():
 		return s.provideGithubClient()
 	}
 	logrus.Fatalln("main: source code management system not configured")
@@ -51,15 +51,12 @@ func (s *service) provideGithubClient() *scm.Client {
 }
 
 //List return all repository by owner.
-func (s *service) List(ctx context.Context, user *core.User, provider core.VcsProvider) ([]*core.Repository, error) {
-	client := s.provideClient(provider)
-	token, refresh, err := userToken(user, provider)
-	if err != nil {
-		return nil, err
-	}
+func (s *service) List(ctx context.Context, token *core.Token) ([]*core.Repository, error) {
+	client := s.provideClient(token.Provider)
+
 	ctx = context.WithValue(ctx, scm.TokenKey{}, &scm.Token{
-		Token:   token,
-		Refresh: refresh,
+		Token:   token.Access,
+		Refresh: token.Refresh,
 	})
 	repos := []*core.Repository{}
 	opts := scm.ListOptions{Size: 100}
@@ -82,6 +79,6 @@ func (s *service) List(ctx context.Context, user *core.User, provider core.VcsPr
 }
 
 //Find
-func (s *service) Find(ctx context.Context, user *core.User, repo string, provider core.VcsProvider) (*core.Repository, error) {
+func (s *service) Find(ctx context.Context, token *core.Token, repo string) (*core.Repository, error) {
 	return nil, nil
 }

@@ -58,7 +58,7 @@ func (s Server) Handler() http.Handler {
 	r.Use(cors.Handler)
 
 	r.Route("/repos", func(r chi.Router) {
-		r.Get("/{provider}", repos.HandleListRepos(s.Repoz))
+		r.Get("/{provider}", repos.HandleListRepos(s.Repos))
 	})
 	r.Route("/users", func(r chi.Router) {
 		r.Post("/", users.HandleCreateUser(s.Users))

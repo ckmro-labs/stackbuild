@@ -18,6 +18,7 @@ type (
 		LastLogin       int64            `bson:"lastLogin" json:"last_login,omitempty"`
 		Token           string           `bson:"token" json:"token,omitempty"` //登录后需要更新它
 		Authentications []Authentication `bson:"authentications" json:"authentications,omitempty"`
+		Synced          int64            `bson:"synced" json:"-,omitempty"`
 	}
 
 	// UserStore 用户存储接口.

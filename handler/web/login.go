@@ -1,6 +1,7 @@
 package web
 
 import (
+	"context"
 	"net/http"
 	"time"
 
@@ -42,6 +43,10 @@ func HandleOAuthLogin(
 			// TODO 非登录用户
 		}
 
+		if is := isSync(user.Synced); is {
+			go synchornize(r.Context(), syncer, user)
+		}
+
 		session.Create(w, user)
 		http.Redirect(w, r, "/healthz", 303)
 	}
@@ -73,6 +78,10 @@ func HandleFormLogin(
 			return
 		}
 
+		if is := isSync(user.Synced); is {
+			go synchornize(r.Context(), syncer, user)
+		}
+
 		user.LastLogin = time.Now().Unix()
 		// err = users.Update(ctx, user)
 		// if err != nil {
@@ -85,4 +94,30 @@ func HandleFormLogin(
 
 func writeLoginError(w http.ResponseWriter, r *http.Request, err error) {
 	http.Redirect(w, r, "/static/?err="+err.Error(), 303)
+}
+
+func isSync(synced int64) bool {
+	return time.Unix(synced, 0).Add(time.Hour * 24 * 7).Before(time.Now())
+}
+
+//synchornize start sync repo info.
+func synchornize(ctx context.Context, syncer core.Syncer, user *core.User) {
+	log := logrus.WithField("login", user.Login)
+	log.Debugf("begin synchronization")
+	timeout, cancel := context.WithTimeout(context.Background(), time.Minute*30)
+	timeout = logger.WithContext(timeout, log)
+	defer cancel()
+
+	for _, auth := range user.Authentications {
+		err := syncer.Sync(timeout, &core.Token{
+			Provider: auth.AuthName.String(),
+			Access:   auth.Token,
+			Refresh:  auth.Refresh,
+		})
+		if err != nil {
+			log.Debugf("synchronization failed: %s", err)
+		} else {
+			log.Debugf("synchronization success")
+		}
+	}
 }

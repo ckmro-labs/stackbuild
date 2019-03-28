@@ -21,12 +21,12 @@ func HandleFind() http.HandlerFunc {
 }
 
 //HandleListRepos list remote repository.
-func HandleListRepos(repoz core.RepositoryService) http.HandlerFunc {
+func HandleListRepos(repos core.RepositoryStore) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		ctx := r.Context()
 		provider := chi.URLParam(r, "provider")
 		user, _ := request.UserFrom(ctx)
-		repos, err := repoz.List(ctx, user, request.ProviderFrom(provider))
+		repos, err := repos.List(ctx, provider, user)
 		if err != nil {
 			render.InternalError(w, err)
 		}

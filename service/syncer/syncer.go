@@ -29,12 +29,12 @@ func New(
 }
 
 //Sync sync remote repository to local
-func (s *Synchronizer) Sync(ctx context.Context, user *core.User, provider core.VcsProvider) error {
+func (s *Synchronizer) Sync(ctx context.Context, token *core.Token) error {
 	//
 	// STEP1: get the list of repositories from the remote
 	//
 	{
-		repos, err := s.repoz.List(ctx, user, provider)
+		repos, err := s.repoz.List(ctx, token)
 		if err != nil {
 			return err
 		}

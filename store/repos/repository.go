@@ -22,8 +22,8 @@ func (s *repositoryStore) Find(ctx context.Context, id string) (*core.Repository
 	return nil, nil
 }
 
-// FindLogin returns a user from the datastore by username.
-func (s *repositoryStore) List(ctx context.Context, id string) ([]*core.Repository, error) {
+// FindLogin returns a user from the datastore by repo name.
+func (s *repositoryStore) List(ctx context.Context, name string, user *core.User) ([]*core.Repository, error) {
 	return nil, nil
 }
 
