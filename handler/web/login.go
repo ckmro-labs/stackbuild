@@ -19,6 +19,7 @@ func HandleOAuthLogin(
 	userz core.UserService,
 	syncer core.Syncer,
 	session core.Session,
+	sources core.SourceAuthStore,
 ) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		// 授权回调
@@ -31,20 +32,24 @@ func HandleOAuthLogin(
 		source := core.TokenFrom(ctx)
 		if err == nil && user != nil || user.ID != "" {
 			log.Debugf("已登录用户: %v", user.ID)
-			for _, auth := range user.Authentications {
-				if auth.AuthName.String() == source.Provider {
-					auth.Expired = source.Expires.Unix()
-					auth.Token = source.Access
-					auth.Refresh = source.Refresh
-				}
+			err := sources.Create(ctx, &core.SourceAuth{
+				UserID:   user.ID,
+				UID:      source.UID,
+				AuthName: source.Provider,
+				Token:    source.Access,
+				Refresh:  source.Refresh,
+				Expired:  source.Expires.Unix(),
+			})
+			if err != nil {
+				logger.FromRequest(r).WithError(err).Errorf("api: cannot create source auth: %v", source.Provider)
 			}
-
 		} else {
-			// TODO 非登录用户
+			// TODO 非登录用户，创建账号
+			user = &core.User{}
 		}
 
 		if is := isSync(user.Synced); is {
-			go synchornize(r.Context(), syncer, user)
+			go synchornize(r.Context(), syncer, user, sources)
 		}
 
 		session.Create(w, user)
@@ -58,6 +63,7 @@ func HandleFormLogin(
 	userz core.UserService,
 	syncer core.Syncer,
 	session core.Session,
+	sources core.SourceAuthStore,
 ) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		r.ParseForm()
@@ -79,7 +85,7 @@ func HandleFormLogin(
 		}
 
 		if is := isSync(user.Synced); is {
-			go synchornize(r.Context(), syncer, user)
+			go synchornize(r.Context(), syncer, user, sources)
 		}
 
 		user.LastLogin = time.Now().Unix()
@@ -101,16 +107,16 @@ func isSync(synced int64) bool {
 }
 
 //synchornize start sync repo info.
-func synchornize(ctx context.Context, syncer core.Syncer, user *core.User) {
+func synchornize(ctx context.Context, syncer core.Syncer, user *core.User, sas core.SourceAuthStore) {
 	log := logrus.WithField("login", user.Login)
 	log.Debugf("begin synchronization")
 	timeout, cancel := context.WithTimeout(context.Background(), time.Minute*30)
 	timeout = logger.WithContext(timeout, log)
 	defer cancel()
-
-	for _, auth := range user.Authentications {
+	sources, _ := sas.List(ctx, user.ID)
+	for _, auth := range sources {
 		err := syncer.Sync(timeout, &core.Token{
-			Provider: auth.AuthName.String(),
+			Provider: auth.AuthName,
 			Access:   auth.Token,
 			Refresh:  auth.Refresh,
 		})

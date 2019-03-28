@@ -17,6 +17,7 @@ type Server struct {
 	Users   core.UserStore
 	Userz   core.UserService
 	Syncer  core.Syncer
+	Sources core.SourceAuthStore
 }
 
 //New ...
@@ -26,6 +27,7 @@ func New(
 	users core.UserStore,
 	userz core.UserService,
 	syncer core.Syncer,
+	sources core.SourceAuthStore,
 ) Server {
 	return Server{
 		Repos:   repos,
@@ -33,6 +35,7 @@ func New(
 		Users:   users,
 		Userz:   userz,
 		Syncer:  syncer,
+		Sources: sources,
 	}
 }
 
@@ -56,6 +59,7 @@ func (s Server) Handler() http.Handler {
 			s.Userz,
 			s.Syncer,
 			s.Session,
+			s.Sources,
 		)))
 		r.Route("/{provider}", func(r chi.Router) {
 			r.Use(m2.OAuthMiddleware)
@@ -64,6 +68,7 @@ func (s Server) Handler() http.Handler {
 				s.Userz,
 				s.Syncer,
 				s.Session,
+				s.Sources,
 			)))
 		})
 	})

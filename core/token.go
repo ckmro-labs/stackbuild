@@ -7,6 +7,7 @@ import (
 
 // Token represents an authorization token.
 type Token struct {
+	UID      string
 	Provider string
 	Access   string
 	Refresh  string

@@ -27,6 +27,7 @@ func OAuthMiddleware(next http.Handler) http.Handler {
 		} else {
 			logrus.Infof("user: %v", user)
 			ctx = core.WithToken(ctx, &core.Token{
+				UID:      user.UserID,
 				Provider: provider,
 				Access:   user.AccessToken,
 				Refresh:  user.RefreshToken,
