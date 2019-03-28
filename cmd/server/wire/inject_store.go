@@ -6,6 +6,7 @@ import (
 	"github.com/laidingqing/stackbuild/core"
 	"github.com/laidingqing/stackbuild/store/repos"
 	"github.com/laidingqing/stackbuild/store/shared/db"
+	"github.com/laidingqing/stackbuild/store/source"
 	"github.com/laidingqing/stackbuild/store/user"
 )
 
@@ -14,6 +15,7 @@ var storeSet = wire.NewSet(
 	provideDatabase,
 	provideUserStore,
 	provideRepositoryStore,
+	provideSourceStore,
 )
 
 // provideDatabase is a Wire provider
@@ -31,4 +33,10 @@ func provideUserStore(db *db.SessionStore) core.UserStore {
 func provideRepositoryStore(db *db.SessionStore) core.RepositoryStore {
 	repository := repos.New(db)
 	return repository
+}
+
+// provideSourceStore is a Wire provider
+func provideSourceStore(db *db.SessionStore) core.SourceAuthStore {
+	source := source.New(db)
+	return source
 }
