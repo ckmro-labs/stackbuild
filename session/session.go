@@ -5,9 +5,13 @@ import (
 	"strings"
 	"time"
 
+	"github.com/sirupsen/logrus"
+
 	"github.com/dchest/authcookie"
 	"github.com/laidingqing/stackbuild/core"
 )
+
+var CookieName = "_stack_build_session_"
 
 //Session ...
 type Session struct {
@@ -29,7 +33,7 @@ func New(users core.UserStore, config Config) core.Session {
 //Create write session to http response.
 func (s *Session) Create(w http.ResponseWriter, user *core.User) error {
 	cookie := &http.Cookie{
-		Name:     "_session_",
+		Name:     CookieName,
 		Path:     "/",
 		MaxAge:   2147483647,
 		HttpOnly: true,
@@ -39,29 +43,35 @@ func (s *Session) Create(w http.ResponseWriter, user *core.User) error {
 			s.secret,
 		),
 	}
-	w.Header().Add("Set-Cookie", cookie.String()+"; SameSite=lax")
+	// w.Header().Add("Set-Cookie", cookie.String()+"; SameSite=lax")
+	http.SetCookie(w, cookie)
 	return nil
 }
 
+//Delete delete cookie .
 func (s *Session) Delete(w http.ResponseWriter) error {
-	w.Header().Add("Set-Cookie", "_session_=deleted; Path=/; Max-Age=0")
+	w.Header().Add("Set-Cookie", "_stack_build_session_=deleted; Path=/; Max-Age=0")
 	return nil
 }
 
+//Get get a user from session or other.
 func (s *Session) Get(r *http.Request) (*core.User, error) {
-	switch {
-	case isAuthorizationToken(r):
-		return s.fromToken(r)
-	case isAuthorizationParameter(r):
-		return s.fromToken(r)
-	default:
-		return s.fromSession(r)
-	}
+	// switch {
+	// case isAuthorizationToken(r):
+	// 	return s.fromToken(r)
+	// case isAuthorizationParameter(r):
+	// 	return s.fromToken(r)
+	// default:
+	// 	return s.fromSession(r)
+	// }
+	// TODO 增加其它，如认证头或token参数
+	return s.fromSession(r)
 }
 
 func (s *Session) fromSession(r *http.Request) (*core.User, error) {
-	cookie, err := r.Cookie("_session_")
+	cookie, err := r.Cookie(CookieName)
 	if err != nil {
+		logrus.Errorf("from session err : %v", err.Error())
 		return nil, nil
 	}
 	login := authcookie.Login(cookie.Value, s.secret)

@@ -1,6 +1,10 @@
 package wire
 
 import (
+	"time"
+
+	"github.com/gin-contrib/sessions"
+	"github.com/gin-contrib/sessions/cookie"
 	"github.com/go-chi/chi"
 	"github.com/google/wire"
 	"github.com/laidingqing/stackbuild/auth/provider"
@@ -9,6 +13,7 @@ import (
 	"github.com/laidingqing/stackbuild/handler/web"
 	"github.com/laidingqing/stackbuild/server"
 	"github.com/markbates/goth"
+	"github.com/markbates/goth/gothic"
 )
 
 // wire set for loading the server.
@@ -51,4 +56,10 @@ func provideOauthProvider(config config.Config) {
 		goth.UseProviders(*providers[i].Implementation)
 	}
 
+	store := cookie.NewStore([]byte(""))
+	store.Options(sessions.Options{
+		MaxAge: int(time.Second * time.Duration(21600)),
+		Path:   "/",
+	})
+	gothic.Store = store
 }

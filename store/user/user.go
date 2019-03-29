@@ -67,3 +67,8 @@ func (s *userStore) Create(ctx context.Context, user *core.User) error {
 	user.ID = bson.NewObjectId().Hex()
 	return s.db.C(UsersCollKey).Insert(user)
 }
+
+//Update update a user info.
+func (s *userStore) Update(ctx context.Context, user *core.User) error {
+	return s.db.C(UsersCollKey).UpdateId(user.ID, user)
+}

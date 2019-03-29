@@ -26,18 +26,17 @@ func New(config config.Config) core.RepositoryService {
 
 func (s *service) provideClient(provider string) *scm.Client {
 	switch {
-	case provider != core.VcsProviderGitHub.String():
+	case provider == core.VcsProviderGitHub.String():
 		return s.provideGithubClient()
 	}
-	logrus.Fatalln("main: source code management system not configured")
+	logrus.Errorf("main: source code management system not configured")
 	return nil
 }
 
 func (s *service) provideGithubClient() *scm.Client {
 	client, err := github.New(s.Config.Github.APIServer)
 	if err != nil {
-		logrus.WithError(err).
-			Fatalln("main: cannot create the GitHub client")
+		logrus.WithError(err).Errorf("main: cannot create the GitHub client")
 	}
 	if s.Config.Github.Debug {
 		client.DumpResponse = httputil.DumpResponse
@@ -52,8 +51,9 @@ func (s *service) provideGithubClient() *scm.Client {
 
 //List return all repository by owner.
 func (s *service) List(ctx context.Context, token *core.Token) ([]*core.Repository, error) {
+	logrus.Infof("token: %v", token)
 	client := s.provideClient(token.Provider)
-
+	logrus.Infof("client: %v", client)
 	ctx = context.WithValue(ctx, scm.TokenKey{}, &scm.Token{
 		Token:   token.Access,
 		Refresh: token.Refresh,

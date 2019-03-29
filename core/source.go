@@ -13,7 +13,7 @@ type (
 		UID      string    `bson:"uid" json:"uid"`
 		AuthName string    `bson:"name" json:"name"`
 		Token    string    `bson:"token" json:"token"`
-		Refresh  string    `bson:"fresh" json:"refresh_token"`
+		Refresh  string    `bson:"refresh" json:"refresh_token"`
 		Expired  int64     `bson:"expired" json:"expired"`
 		Created  time.Time `bson:"created" json:"created_at"`
 		Updated  time.Time `bson:"updated" json:"updated_at"`

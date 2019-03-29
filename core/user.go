@@ -30,6 +30,8 @@ type (
 		FindToken(context.Context, string) (*User, error)
 		// Create persists a new user to the datastore.
 		Create(context.Context, *User) error
+		// Update persists a user
+		Update(context.Context, *User) error
 	}
 	// UserService 远程用户操作接口, 如github.com用户
 	UserService interface {

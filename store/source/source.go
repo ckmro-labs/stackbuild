@@ -30,11 +30,13 @@ type sourceStore struct {
 //Create add a source auth by user.
 func (s *sourceStore) Create(ctx context.Context, sourceAuth *core.SourceAuth) error {
 	source, _ := s.Find(ctx, sourceAuth.AuthName, sourceAuth.UID)
-	if source.ID == "" {
+	if source == nil {
 		source = sourceAuth
 		source.ID = bson.NewObjectId().Hex()
 	}
-	return s.db.C(SourceAuthCollKey).UpdateId(sourceAuth.ID, sourceAuth)
+	_, err := s.db.C(SourceAuthCollKey).UpsertId(sourceAuth.ID, sourceAuth)
+
+	return err
 }
 
 // Find find a source auth provider

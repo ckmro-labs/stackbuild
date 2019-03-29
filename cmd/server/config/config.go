@@ -33,7 +33,7 @@ type (
 	//Session cookie-base session configuration.
 	Session struct {
 		Timeout time.Duration `envconfig:"DSTACK_BUILD_COOKIE_TIMEOUT" default:"720h"`
-		Secret  string        `envconfig:"STACK_BUILD_COOKIE_SECRET"`
+		Secret  string        `envconfig:"STACK_BUILD_COOKIE_SECRET" default:"stack_build_session_secret"`
 	}
 
 	// Logging provides the logging configuration.

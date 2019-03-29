@@ -29,8 +29,9 @@ func HandleOAuthLogin(
 		ctx := r.Context()
 		log := logger.FromContext(ctx)
 		user, err := session.Get(r)
+		logger.FromRequest(r).WithError(err).Infof("web: session user: %v, %v", user, err)
 		source := core.TokenFrom(ctx)
-		if err == nil && user != nil || user.ID != "" {
+		if err == nil && user != nil {
 			log.Debugf("已登录用户: %v", user.ID)
 			err := sources.Create(ctx, &core.SourceAuth{
 				UserID:   user.ID,
@@ -41,7 +42,7 @@ func HandleOAuthLogin(
 				Expired:  source.Expires.Unix(),
 			})
 			if err != nil {
-				logger.FromRequest(r).WithError(err).Errorf("api: cannot create source auth: %v", source.Provider)
+				logger.FromRequest(r).WithError(err).Errorf("web: cannot create source auth: %v", source.Provider)
 			}
 		} else {
 			// TODO 非登录用户，创建账号
@@ -69,7 +70,6 @@ func HandleFormLogin(
 		r.ParseForm()
 		login := r.Form.Get("login")
 		password := r.Form.Get("password")
-		logrus.Infof("password: %v", password)
 
 		user, err := users.FindLogin(r.Context(), login)
 		if err != nil {
@@ -89,11 +89,19 @@ func HandleFormLogin(
 		}
 
 		user.LastLogin = time.Now().Unix()
-		// err = users.Update(ctx, user)
-		// if err != nil {
-		// 	logger.Errorf("cannot update user: %s", err)
-		// }
-		session.Create(w, user)
+		err = users.Update(r.Context(), user)
+		if err != nil {
+			logrus.Errorf("cannot update user: %s", err)
+		}
+		err = session.Create(w, user)
+		if err != nil {
+			logrus.Errorf("cannot create session: %s", err.Error())
+		}
+
+		//test
+		u, _ := session.Get(r)
+		logrus.Infof("session user: %v", u)
+
 		http.Redirect(w, r, "/healthz", 303)
 	}
 }
