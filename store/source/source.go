@@ -33,6 +33,8 @@ func (s *sourceStore) Create(ctx context.Context, sourceAuth *core.SourceAuth) e
 	if source == nil {
 		source = sourceAuth
 		source.ID = bson.NewObjectId().Hex()
+	} else {
+		sourceAuth.ID = source.ID
 	}
 	_, err := s.db.C(SourceAuthCollKey).UpsertId(sourceAuth.ID, sourceAuth)
 
