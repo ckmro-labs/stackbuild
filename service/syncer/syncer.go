@@ -31,7 +31,7 @@ func New(
 //Sync sync remote repository to local
 func (s *Synchronizer) Sync(ctx context.Context, token *core.Token) error {
 	//
-	// STEP1: get the list of repositories from the remote
+	// save local repository db. from remote repository.
 	//
 	{
 		repos, err := s.repoz.List(ctx, token)
@@ -39,26 +39,13 @@ func (s *Synchronizer) Sync(ctx context.Context, token *core.Token) error {
 			return err
 		}
 		logrus.Infof("Repository size: %v", len(repos))
+		for _, rep := range repos {
+			err := s.repos.Create(ctx, rep)
+			if err != nil {
+				logrus.Errorf("save or update repository err: %v", err.Error())
+			}
+		}
 	}
-	//
-	// STEP2: get the list of repositories stored in the local db
-	//
-
-	//
-	// STEP3 no found in local. Insert.
-	//
-
-	//
-	// STEP3 exist in local. Update.
-	//
-
-	//
-	// STEP3 exist in local, but not exist in remote. delete.
-	//
-
-	//
-	// STEP4 update the store.
-	//
 
 	return nil
 }

@@ -30,29 +30,28 @@ func (p VcsProvider) String() string {
 type (
 	// Repository represents a source code repository.
 	Repository struct {
-		ID        string      `json:"id"`
-		UID       string      `json:"uid"`
-		UserID    int64       `json:"user_id"`
-		Provider  VcsProvider `json:"provider"`
-		Namespace string      `json:"namespace"`
-		Name      string      `json:"name"`
-		Slug      string      `json:"slug"`
-		SCM       string      `json:"scm"`
-		HTTPURL   string      `json:"git_http_url"`
-		SSHURL    string      `json:"git_ssh_url"`
-		Link      string      `json:"link"`
-		Branch    string      `json:"default_branch"`
-		Private   bool        `json:"private"`
-		Timeout   int64       `json:"timeout"`
-		Created   int64       `json:"created"`
-		Updated   int64       `json:"updated"`
-		Version   int64       `json:"version"`
+		ID        string `bson:"_id" json:"id,omitempty"`
+		UID       string `bson:"uid" json:"uid,omitempty"`
+		UserID    string `bson:"userId" json:"user_id,omitempty"`
+		Provider  string `bson:"provider" json:"provider,omitempty"`
+		Namespace string `bson:"nameSpace" json:"namespace,omitempty"`
+		Name      string `bson:"name" json:"name,omitempty"`
+		Slug      string `bson:"slug" json:"slug,omitempty"`
+		HTTPURL   string `bson:"httpUrl" json:"git_http_url,omitempty"`
+		SSHURL    string `bson:"sshUrl" json:"git_ssh_url,omitempty"`
+		Link      string `bson:"link" json:"link,omitempty"`
+		Branch    string `bson:"branch" json:"default_branch,omitempty"`
+		Private   bool   `bson:"private" json:"private,omitempty"`
+		Timeout   int64  `bson:"timeOut" json:"timeout,omitempty"`
+		Created   int64  `bson:"created" json:"created,omitempty"`
+		Updated   int64  `bson:"updated" json:"updated,omitempty"`
 	}
 
 	// RepositoryStore 仓库操作接口
 	RepositoryStore interface {
 		List(context.Context, string, *User) ([]*Repository, error)
 		Find(context.Context, string) (*Repository, error)
+		FindByProvider(context.Context, string, string) (*Repository, error)
 		Create(context.Context, *Repository) error
 		Delete(context.Context, *Repository) error
 		Activate(context.Context, *Repository) error
