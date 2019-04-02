@@ -20,6 +20,23 @@ type repositoryStore struct {
 	db *db.SessionStore
 }
 
+//Query query collection by query params.
+func (s *repositoryStore) Query(ctx context.Context, q map[string]interface{}) ([]*core.Repository, error) {
+	var repositories []*core.Repository
+	query := s.db.C(RepositoryCollName).Find(q["query"])
+	if ok, val := q["pagination"].(bool); ok && val {
+		query.
+			Skip((q["page"].(int) - 1) * q["limit"].(int)).
+			Limit(q["limit"].(int))
+	}
+	err := query.All(&repositories)
+	if err != nil {
+		return nil, err
+	}
+
+	return repositories, nil
+}
+
 // Find returns a user from the datastore.
 func (s *repositoryStore) Find(ctx context.Context, id string) (*core.Repository, error) {
 	var repository *core.Repository

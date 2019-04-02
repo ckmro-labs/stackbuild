@@ -55,6 +55,7 @@ type (
 		Create(context.Context, *Repository) error
 		Delete(context.Context, *Repository) error
 		Activate(context.Context, *Repository) error
+		Query(context.Context, map[string]interface{}) ([]*Repository, error)
 	}
 
 	//RepositoryService 提供远程仓库接口操作

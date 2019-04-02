@@ -1,5 +1,7 @@
 package core
 
+import "context"
+
 //Workflow ..
 type Workflow string
 
@@ -20,6 +22,8 @@ type (
 		RepoID    string        `json:"repo_id"`
 		Name      string        `json:"name"`
 		Webhook   string        `json:"webhook"`
+		Limit     int           `json:"limit,omitempty"`
+		Status    string        `json:"status"`
 		Variables []Variables   `json:"variables"`
 		Steps     []interface{} `json:"steps"`
 	}
@@ -59,5 +63,11 @@ type (
 
 	//StageStore pipline store for db.
 	StageStore interface {
+		// Create persists a new stage to the datastore.
+		Create(context.Context, *Stage) error
+		// Find returns a build stage from the datastore by ID.
+		Find(context.Context, int64) (*Stage, error)
+		// List returns a build stage list from the datastore, where the stage is incomplete (pending or running).
+		ListIncomplete(context.Context) ([]*Stage, error)
 	}
 )
