@@ -1,28 +1,34 @@
 package core
 
 type (
-	//Build 一次构建信息, 它包含Step信息。
+	//BuildStep build step...
+	BuildStep struct {
+		Number   int    `bson:"num" json:"num"`
+		Name     string `bson:"name" json:"name"`
+		Status   string `bson:"status" json:"status"`
+		Error    string `bson:"err" json:"error,omitempty"`
+		ExitCode int    `bson:"exitCode" json:"exit_code"`
+		Started  int64  `bson:"nstarted" json:"started,omitempty"`
+		Stopped  int64  `bson:"stopped" json:"stopped,omitempty"`
+	}
+
+	//Build 一次管道构建信息, 来自Stage触发
 	Build struct {
-		ID        int64             `json:"id"`
-		RepoID    int64             `json:"repo_id"`
-		Trigger   string            `json:"trigger"`
-		Status    string            `json:"status"`
-		Error     string            `json:"error,omitempty"`
-		Link      string            `json:"link"`
-		Timestamp int64             `json:"timestamp"`
-		Title     string            `json:"title,omitempty"`
-		Message   string            `json:"message"`
-		Before    string            `json:"before"`
-		After     string            `json:"after"`
-		Ref       string            `json:"ref"`
-		Target    string            `json:"target"` //master or branch.
-		Author    string            `json:"author"`
-		Sender    string            `json:"sender"`
-		Params    map[string]string `json:"params,omitempty"`
-		Started   int64             `json:"started"`
-		Finished  int64             `json:"finished"`
-		Created   int64             `json:"created"`
-		Updated   int64             `json:"updated"`
+		ID         int64             `bson:"_id" json:"id"`
+		RepoID     int64             `bson:"repoId" json:"repo_id"`
+		Status     string            `bson:"status" json:"status"`
+		Error      string            `bson:"err" json:"error,omitempty"`
+		Link       string            `bson:"link" json:"link"`
+		Timestamp  int64             `json:"timestamp"`
+		Title      string            `bson:"title" json:"title,omitempty"`
+		Ref        string            `bson:"ref" json:"ref"`       // like this: refs/heads/master
+		Target     string            `bson:"target" json:"target"` //master or branch.
+		Params     map[string]string `bson:"params" json:"params,omitempty"`
+		Started    int64             `bson:"started" json:"started,omitempty"`
+		Finished   int64             `bson:"finished" json:"finished,omitempty"`
+		Created    int64             `bson:"created" json:"created,omitempty"`
+		Updated    int64             `bson:"updated" json:"updated,omitempty"`
+		BuildSteps []BuildStep       `bson:"steps" json:"steps,omitempty"`
 	}
 
 	//BuildStore build for storage.

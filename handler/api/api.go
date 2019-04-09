@@ -7,6 +7,7 @@ import (
 	"github.com/go-chi/chi/middleware"
 	"github.com/go-chi/cors"
 	"github.com/laidingqing/stackbuild/core"
+	"github.com/laidingqing/stackbuild/handler/api/builds"
 	"github.com/laidingqing/stackbuild/handler/api/events"
 	"github.com/laidingqing/stackbuild/handler/api/repos"
 	"github.com/laidingqing/stackbuild/handler/api/users"
@@ -59,10 +60,12 @@ func (s Server) Handler() http.Handler {
 
 	r.Route("/repos/{owner}/{name}", func(r chi.Router) {
 		r.Get("/", repos.HandleFind(s.Repos))
+		r.Post("/builds", builds.HandleTryBuild(s.Repos))
 	})
 	r.Route("/users", func(r chi.Router) {
 		r.Post("/", users.HandleCreateUser(s.Users))
 		r.Get("/repos", repos.HandleListRepos(s.Repos))
+
 	})
 
 	r.Route("/stream", func(r chi.Router) {

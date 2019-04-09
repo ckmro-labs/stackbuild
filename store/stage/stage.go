@@ -7,10 +7,10 @@ import (
 	"github.com/laidingqing/stackbuild/store/shared/db"
 )
 
-//StageCollName stage db name
-var StageCollName = "stages"
+//StageCollNameKey stage db name
+var StageCollNameKey = "stages"
 
-// New returns a new RepositoryStore.
+// New returns a new StageStore.
 func New(db *db.SessionStore) core.StageStore {
 	return &stageStore{db}
 }
@@ -20,12 +20,15 @@ type stageStore struct {
 }
 
 func (s *stageStore) Create(ctx context.Context, stage *core.Stage) error {
-	return nil
+	_, err := s.db.C(StageCollNameKey).UpsertId(stage.ID, stage)
+	return err
 }
 
 // Find returns a build stage from the datastore by ID.
-func (s *stageStore) Find(ctx context.Context, id int64) (*core.Stage, error) {
-	return nil, nil
+func (s *stageStore) Find(ctx context.Context, id string) (*core.Stage, error) {
+	var stage *core.Stage
+	err := s.db.C(StageCollNameKey).FindId(id).One(&stage)
+	return stage, err
 }
 
 // List returns a build stage list from the datastore, where the stage is incomplete (pending or running).

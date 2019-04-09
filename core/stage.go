@@ -17,15 +17,18 @@ const (
 type (
 	//Stage 场景集成构建管道定义
 	Stage struct {
-		ID        string        `json:"id"`
-		UID       string        `json:"uid"`
-		RepoID    string        `json:"repo_id"`
-		Name      string        `json:"name"`
-		Webhook   string        `json:"webhook"`
-		Limit     int           `json:"limit,omitempty"`
-		Status    string        `json:"status"`
-		Variables []Variables   `json:"variables"`
-		Steps     []interface{} `json:"steps"`
+		ID        string        `bson:"_id" json:"id"`
+		Name      string        `bson:"name" json:"name"`
+		UID       string        `bson:"uid" json:"uid"` //user id
+		RepoID    string        `bson:"repoId" json:"repo_id"`
+		Branch    string        `bson:"branch" json:"branch"`
+		Ref       string        `bson:"ref" json:"ref"`
+		Webhook   string        `bson:"webhook" json:"webhook"`
+		Limit     int           `bson:"limit" json:"limit,omitempty"`
+		Status    string        `bson:"status" json:"status"`        ////最后一次构建状态
+		LastBuild int64         `bson:"lastBuild" json:"last_build"` //最后一次构建时间
+		Variables []Variables   `bson:"variables" json:"variables"`
+		Steps     []interface{} `bson:"steps" json:"steps"`
 	}
 
 	//Triggers trigger for vcs.
@@ -66,7 +69,7 @@ type (
 		// Create persists a new stage to the datastore.
 		Create(context.Context, *Stage) error
 		// Find returns a build stage from the datastore by ID.
-		Find(context.Context, int64) (*Stage, error)
+		Find(context.Context, string) (*Stage, error)
 		// List returns a build stage list from the datastore, where the stage is incomplete (pending or running).
 		ListIncomplete(context.Context) ([]*Stage, error)
 	}
