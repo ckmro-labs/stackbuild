@@ -1,6 +1,8 @@
 package core
 
-import "context"
+import (
+	"context"
+)
 
 //Workflow ..
 type Workflow string
@@ -10,6 +12,8 @@ const (
 	BuildWorkflow Workflow = "build"
 	//UnitTestWorkflow test workflow type.
 	UnitTestWorkflow Workflow = "test"
+	//PackageWorkflow package type.
+	PackageWorkflow Workflow = "package"
 	//RegistryWorkflow push to registry
 	RegistryWorkflow Workflow = "registry"
 )
@@ -25,10 +29,12 @@ type (
 		Ref       string        `bson:"ref" json:"ref"`
 		Webhook   string        `bson:"webhook" json:"webhook"`
 		Limit     int           `bson:"limit" json:"limit,omitempty"`
+		Created   int64         `bson:"created" json:"created_at"`
+		Updated   int64         `bson:"updated" json:"updated_at"`
 		Status    string        `bson:"status" json:"status"`        ////最后一次构建状态
 		LastBuild int64         `bson:"lastBuild" json:"last_build"` //最后一次构建时间
 		Variables []Variables   `bson:"variables" json:"variables"`
-		Steps     []interface{} `bson:"steps" json:"steps"`
+		Steps     []PiplineStep `bson:"steps" json:"steps"`
 	}
 
 	//Triggers trigger for vcs.
@@ -38,24 +44,17 @@ type (
 		Branch string   `json:"branch"`
 	}
 
-	//BuildingDockerImage pipeline's workflow for build.
-	BuildingDockerImage struct {
-		Title      string   `json:"title"`
-		Type       Workflow `json:"type" default:"build"`
-		ImageName  string   `json:"image_name"`
-		Working    string   `json:"working_directory"`
-		Dockerfile string   `json:"dockerfile"`
-	}
-
-	//RegistryImage pipeline's workflow for push registry.
-	RegistryImage struct {
-		Type Workflow `json:"type" default:"registry"`
-	}
-
-	//UnitTest pipeline's workflow for unit tests.
-	UnitTest struct {
-		Type   Workflow `json:"type" default:"test"`
-		Script string   `json:"script"`
+	//PiplineStep pipeline's workflow for build.
+	PiplineStep struct {
+		Title     string   `bson:"title" json:"title"`
+		Type      Workflow `bson:"type" json:"type" default:"build"`
+		Command   string   `bson:"command" json:"command"`
+		Host      string   `bson:"host" json:"host"`
+		UserName  string   `bson:"userName" json:"user_name"`
+		Password  string   `bson:"password" json:"password"`
+		Cert      string   `bson:"cert" json:"cert"`
+		ImageName string   `bson:"imageName"  json:"image_name"`
+		Working   string   `bson:"workDir"  json:"working_directory"`
 	}
 
 	//Variables pipeline env vars.

@@ -56,15 +56,12 @@ func (s *Session) Delete(w http.ResponseWriter) error {
 
 //Get get a user from session or other.
 func (s *Session) Get(r *http.Request) (*core.User, error) {
-	// switch {
-	// case isAuthorizationToken(r):
-	// 	return s.fromToken(r)
-	// case isAuthorizationParameter(r):
-	// 	return s.fromToken(r)
-	// default:
-	// 	return s.fromSession(r)
-	// }
-	// TODO 增加其它，如认证头或token参数
+	switch {
+	case isAuthorizationParameter(r):
+		return s.fromToken(r)
+	default:
+		s.fromSession(r)
+	}
 	return s.fromSession(r)
 }
 
@@ -82,9 +79,7 @@ func (s *Session) fromSession(r *http.Request) (*core.User, error) {
 }
 
 func (s *Session) fromToken(r *http.Request) (*core.User, error) {
-	return s.users.FindToken(r.Context(),
-		extractToken(r),
-	)
+	return s.users.FindToken(r.Context(), extractToken(r))
 }
 
 func isAuthorizationToken(r *http.Request) bool {

@@ -7,6 +7,7 @@ import (
 	"github.com/laidingqing/stackbuild/store/repos"
 	"github.com/laidingqing/stackbuild/store/shared/db"
 	"github.com/laidingqing/stackbuild/store/source"
+	"github.com/laidingqing/stackbuild/store/stage"
 	"github.com/laidingqing/stackbuild/store/user"
 )
 
@@ -16,11 +17,18 @@ var storeSet = wire.NewSet(
 	provideUserStore,
 	provideRepositoryStore,
 	provideSourceStore,
+	provideStageStore,
 )
 
 // provideDatabase is a Wire provider
 func provideDatabase(config config.Config) *db.SessionStore {
 	return db.NewSessionStore(config.Database.Datasource, config.Database.Database)
+}
+
+// provideStageStore is a Wire provider
+func provideStageStore(db *db.SessionStore) core.StageStore {
+	stage := stage.New(db)
+	return stage
 }
 
 // provideUserStore is a Wire provider

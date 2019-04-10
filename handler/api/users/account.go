@@ -1,7 +1,9 @@
 package users
 
 import (
+	"crypto/md5"
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"time"
 
@@ -9,9 +11,48 @@ import (
 
 	"github.com/laidingqing/stackbuild/core"
 	"github.com/laidingqing/stackbuild/handler/api/response"
+	"github.com/laidingqing/stackbuild/handler/errors"
 	"github.com/laidingqing/stackbuild/logger"
 	"golang.org/x/crypto/bcrypt"
 )
+
+//HandleUserLogin handle user login by api , it's test
+func HandleUserLogin(users core.UserStore) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		in := new(core.User)
+		err := json.NewDecoder(r.Body).Decode(in)
+		if err != nil {
+			response.BadRequest(w, err)
+			logger.FromRequest(r).WithError(err).
+				Debugln("api: cannot unmarshal request body")
+			return
+		}
+
+		user, err := users.FindLogin(r.Context(), in.Login)
+		if err != nil {
+			logrus.Errorf("query user err: %v", err.Error())
+			response.NotFound(w, err)
+			return
+		}
+
+		err = bcrypt.CompareHashAndPassword([]byte(user.EncryptPassword), []byte(in.Password))
+		if err != nil {
+			response.Unauthorized(w, errors.ErrPasswordNotMatched)
+			return
+		}
+		h := md5.New()
+		user.Token = fmt.Sprintf("%x", h.Sum(nil))
+
+		err = users.Update(r.Context(), user)
+
+		if err != nil {
+			response.InternalError(w, err)
+			return
+		}
+
+		response.JSON(w, user, 200)
+	}
+}
 
 //HandleCreateUser create a user.
 func HandleCreateUser(users core.UserStore) http.HandlerFunc {

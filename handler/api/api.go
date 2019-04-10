@@ -7,9 +7,11 @@ import (
 	"github.com/go-chi/chi/middleware"
 	"github.com/go-chi/cors"
 	"github.com/laidingqing/stackbuild/core"
+	"github.com/laidingqing/stackbuild/handler/api/acl"
 	"github.com/laidingqing/stackbuild/handler/api/builds"
 	"github.com/laidingqing/stackbuild/handler/api/events"
 	"github.com/laidingqing/stackbuild/handler/api/repos"
+	"github.com/laidingqing/stackbuild/handler/api/stages"
 	"github.com/laidingqing/stackbuild/handler/api/users"
 	"github.com/laidingqing/stackbuild/logger"
 )
@@ -25,11 +27,13 @@ var corsOpts = cors.Options{
 
 // Server is a http.Handler which exposes drone functionality over HTTP.
 type Server struct {
-	Repos  core.RepositoryStore
-	Repoz  core.RepositoryService
-	Syncer core.Syncer
-	Events core.Pubsub
-	Users  core.UserStore
+	Repos   core.RepositoryStore
+	Repoz   core.RepositoryService
+	Syncer  core.Syncer
+	Events  core.Pubsub
+	Users   core.UserStore
+	Stages  core.StageStore
+	Session core.Session
 }
 
 //New new api server
@@ -39,13 +43,17 @@ func New(
 	syncer core.Syncer,
 	events core.Pubsub,
 	users core.UserStore,
+	stages core.StageStore,
+	session core.Session,
 ) Server {
 	return Server{
-		Repos:  repos,
-		Repoz:  repoz,
-		Syncer: syncer,
-		Events: events,
-		Users:  users,
+		Repos:   repos,
+		Repoz:   repoz,
+		Syncer:  syncer,
+		Events:  events,
+		Users:   users,
+		Stages:  stages,
+		Session: session,
 	}
 }
 
@@ -59,13 +67,18 @@ func (s Server) Handler() http.Handler {
 	r.Use(cors.Handler)
 
 	r.Route("/repos/{owner}/{name}", func(r chi.Router) {
+		r.Use(acl.AuthorizeSessionUser(s.Session))
+		r.Use(acl.InjectRepository(s.Repoz, s.Repos))
+
 		r.Get("/", repos.HandleFind(s.Repos))
 		r.Post("/builds", builds.HandleTryBuild(s.Repos))
+		r.Post("/stages", stages.HandleCreatePipelineStage(s.Stages))
+		r.Get("/stages", stages.HandleListPipelineStage(s.Repos))
 	})
 	r.Route("/users", func(r chi.Router) {
 		r.Post("/", users.HandleCreateUser(s.Users))
 		r.Get("/repos", repos.HandleListRepos(s.Repos))
-
+		r.Post("/login", users.HandleUserLogin(s.Users))
 	})
 
 	r.Route("/stream", func(r chi.Router) {

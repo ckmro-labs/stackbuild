@@ -6,7 +6,6 @@ import (
 	"github.com/sirupsen/logrus"
 
 	"github.com/drone/drone/handler/api/render"
-	"github.com/go-chi/chi"
 	"github.com/laidingqing/stackbuild/core"
 	"github.com/laidingqing/stackbuild/handler/api/request"
 	"github.com/laidingqing/stackbuild/handler/api/response"
@@ -18,22 +17,12 @@ import (
 // response is repostory list
 func HandleFind(repos core.RepositoryStore) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		var (
-			ctx   = r.Context()
-			owner = chi.URLParam(r, "owner")
-			name  = chi.URLParam(r, "name")
-		)
-
-		if repo, _ := repos.Query(ctx, map[string]interface{}{
-			"query": bson.M{
-				"nameSpace": owner,
-				"name":      name,
-			},
-			"pagination": false,
-		}); repo != nil && len(repo) > 0 {
-			response.JSON(w, repo[0], 200)
+		repo, existed := request.RepoFrom(r.Context())
+		if repo != nil && existed {
+			response.JSON(w, repo, 200)
+		} else {
+			response.NotFound(w, errors.ErrNotFound)
 		}
-		response.JSON(w, nil, 200)
 	}
 }
 

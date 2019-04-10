@@ -17,6 +17,7 @@ type (
 		Updated         int64  `bson:"updated" json:"updated,omitempty"`
 		LastLogin       int64  `bson:"lastLogin" json:"last_login,omitempty"`
 		Token           string `bson:"token" json:"token,omitempty"` //登录后需要更新它
+		Expired         int64  `bson:"expired" json:"expired"`       //todo..
 		Synced          int64  `bson:"synced" json:"-,omitempty"`
 	}
 
