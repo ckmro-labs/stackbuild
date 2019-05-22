@@ -104,8 +104,15 @@ export async function updateFakeList(params) {
 }
 
 export async function fakeAccountLogin(params) {
-  return request('/api/login/account', {
+  return request('/server/api/login/github', {
     method: 'POST',
+    data: params,
+  });
+}
+
+export async function helTest(params) {
+  return request('/server/api/healthz', {
+    method: 'GET',
     data: params,
   });
 }
