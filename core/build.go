@@ -1,5 +1,7 @@
 package core
 
+import "context"
+
 type (
 	//BuildStep build step...
 	BuildStep struct {
@@ -33,5 +35,6 @@ type (
 
 	//BuildStore build for storage.
 	BuildStore interface {
+		Create(context.Context, *Build) error
 	}
 )

@@ -8,7 +8,6 @@ import (
 	"github.com/go-chi/cors"
 	"github.com/laidingqing/stackbuild/core"
 	"github.com/laidingqing/stackbuild/handler/api/acl"
-	"github.com/laidingqing/stackbuild/handler/api/builds"
 	"github.com/laidingqing/stackbuild/handler/api/events"
 	"github.com/laidingqing/stackbuild/handler/api/repos"
 	"github.com/laidingqing/stackbuild/handler/api/stages"
@@ -71,10 +70,11 @@ func (s Server) Handler() http.Handler {
 		r.Use(acl.InjectRepository(s.Repoz, s.Repos))
 
 		r.Get("/", repos.HandleFind(s.Repos))
-		r.Post("/builds", builds.HandleTryBuild(s.Repos))
+		// r.Post("/building", builds.HandleBuild(s.Repos))
 		r.Post("/stages", stages.HandleCreatePipelineStage(s.Stages))
 		r.Get("/stages", stages.HandleListPipelineStage(s.Repos))
 	})
+
 	r.Route("/users", func(r chi.Router) {
 		r.Post("/", users.HandleCreateUser(s.Users))
 		r.Get("/repos", repos.HandleListRepos(s.Repos))

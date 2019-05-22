@@ -42,6 +42,7 @@ func HandleUserLogin(users core.UserStore) http.HandlerFunc {
 		}
 		h := md5.New()
 		user.Token = fmt.Sprintf("%x", h.Sum(nil))
+		user.Expired = time.Now().Add(time.Hour * 24).Unix()
 
 		err = users.Update(r.Context(), user)
 
